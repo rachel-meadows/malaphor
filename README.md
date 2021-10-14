@@ -24,4 +24,4 @@ _And on that note - please be aware that because some of the idioms in Wiktionar
 ## What's the status of this project?
 This is a working version of a command-line program that builds a local text file, then generates simple malaphors from that.
 
-I'm in the process of a) using a SQLite database to refine the text output to better reflect semantic content, and b) building a front end for the program so it is accessible to users without having to download this code and each re-scrape the data.
+I'm in the process of a) using a SQLite database to refine the text output to better reflect semantic content, and b) building a front end for the program so it is accessible to users without having to download this code and re-scrape the data.
