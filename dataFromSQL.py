@@ -6,21 +6,7 @@ from urllib.request import urlopen
 conn = sqlite3.connect('malaphortest.sqlite')
 cur = conn.cursor()
 
-"""
 idiom = "jack of all trades"
-
-cur.executescript('''
-
-SELECT Idiom.idiom, Idiom.global_pos, Related.related, Related.type, Semantic.definition, Semantic.example
-    FROM Idiom JOIN Related JOIN Semantic
-    ON Idiom.id = Related.idiom_id AND Idiom.id = Semantic.idiom_id
-    ORDER BY Idiom.idiom LIMIT 10
-
-''')
-
-"""
-
-idiom = "gird up one's loins"
 result = None
 
 # Retrieve the global ID for the idiom
