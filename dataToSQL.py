@@ -2,7 +2,7 @@
 
 Uses the local list of idioms created from Wiktionary using getIdioms.py as a reference.
 Takes these idioms and uses them to make a SQLite database with key info about each idiom.
-The file 'simpleMalaphor3.py' is used to work with these data once extracted.
+The file 'Malaphor.py' is used to work with these data once extracted.
 
 """
 
@@ -18,7 +18,7 @@ alreadyLogged = 0
 newLogs = 0
 everyTen = 0
 
-conn = sqlite3.connect('malaphortest.sqlite')
+conn = sqlite3.connect('textCorpus.sqlite')
 cur = conn.cursor()
 
 # Setup the SQLite tables
@@ -46,8 +46,7 @@ CREATE TABLE IF NOT EXISTS Semantic (
 
 ''')
 
-idiomList = open("idiomList.txt", "r")
-idioms = json.load(open("idiomList.txt"))
+idioms = json.load(open("textCorpus.txt"))
 
 # Set up to parse the HTML as JSON with WiktionaryParser
 parser = WiktionaryParser()
@@ -57,7 +56,7 @@ parser.set_default_language('english')
 for idiom in idioms:
     print(idiom)
 
-    # See if idiom is already in the database, and skip if it is.
+    # See if idiom is already in the SQLite database, and skip if it exists.
     result = None
     cur.execute("select EXISTS(select 1 FROM Idiom WHERE idiom = ? )", (idiom , ))
     result = cur.fetchall()
@@ -84,14 +83,16 @@ for idiom in idioms:
         global_pos = ""
 
     # Semantic table
-    definition = [] # List due to multiple lines
+    definition = []
+    # Items like definition, examples etc. have their data added as lists as they have multiple entries.
+    # They are transformed into one line per item when added to the database.
     try:
         for i in jsonData[0]["definitions"][0]["text"]:
             definition.append(i)
     except:
         pass
 
-    examples = [] # List due to multiple lines
+    examples = []
     try:
         for x in jsonData[0]["definitions"][0]["examples"]:
             examples.append(x)
@@ -99,18 +100,18 @@ for idiom in idioms:
         pass
 
     # Related table
-    synonyms = [] # List due to multiple lines
+    synonyms = []
     try:
         for y in jsonData[0]["definitions"][0]["relatedWords"][0]:
             if jsonData[0]["definitions"][0]["relatedWords"][0][y] == "synonyms":
                 for z in jsonData[0]["definitions"][0]["relatedWords"][0]["words"]:
                     z = z.split(", ")
                     for i in z:
-                        synonyms.append(i) #This ugly syntax is to avoid a list of lists
+                        synonyms.append(i) # This ugly syntax is to avoid a list of lists
     except:
         pass
 
-    see_also = [] # List due to multiple lines
+    see_also = []
     try:
         for y in jsonData[0]["definitions"][0]["relatedWords"][0]:
             if jsonData[0]["definitions"][0]["relatedWords"][0][y] == "see also":
@@ -119,7 +120,7 @@ for idiom in idioms:
     except:
         pass
 
-    derived_terms = [] # List due to multiple lines
+    derived_terms = []
     try:
         for y in jsonData[0]["definitions"][0]["relatedWords"][0]:
             if jsonData[0]["definitions"][0]["relatedWords"][0][y] == "derived terms":
@@ -128,7 +129,7 @@ for idiom in idioms:
     except:
         pass
 
-    alternative_terms = [] # List due to multiple lines
+    alternative_terms = []
     try:
         for y in jsonData[0]["definitions"][0]["relatedWords"][0]:
             if jsonData[0]["definitions"][0]["relatedWords"][0][y] == "alternative terms":
@@ -137,7 +138,7 @@ for idiom in idioms:
     except:
         pass
 
-    related_terms = [] # List due to multiple lines
+    related_terms = []
     try:
         for y in jsonData[0]["definitions"][0]["relatedWords"][0]:
             if jsonData[0]["definitions"][0]["relatedWords"][0][y] == "related terms":
@@ -146,12 +147,14 @@ for idiom in idioms:
     except:
         pass
 
-    # Uncomment for more details about each input
+    # Testing: Uncomment for more details about each input
     # print("\n\nIdiom:\n", idiom, "Global POS:\n\n", global_pos, "\n\nDefinition:\n", definition, "\n\nExamples:\n", examples, "\n\nSynonyms:\n", synonyms)
+
 
     # Put values in the Idiom table
     cur.execute('''INSERT OR IGNORE INTO Idiom (idiom, global_pos)
         VALUES ( ?, ? )''', ( idiom, global_pos) )
+
 
     # Put values in the Related table
 
@@ -190,6 +193,7 @@ for idiom in idioms:
         cur.execute('''INSERT OR IGNORE INTO Related (idiom_id, related, type)
             VALUES ( ?, ?, ?)''', ( idiom_id, i, "related_terms" ) )
 
+
     # Put values in the Semantic table
 
     # Put in Definitions
@@ -210,7 +214,7 @@ for idiom in idioms:
     newLogs += 1
     everyTen += 1
 
-    if everyTen == 10:
+    if everyTen == 10: # Lets you see that nothing has frozen up.
         print(alreadyLogged, "entries already in database.")
         print(newLogs, "new entries added.")
         everyTen = 0
