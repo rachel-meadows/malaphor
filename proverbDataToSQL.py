@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 """
 
 Uses the local list of proverbs created from Wiktionary using getProverbs.py as a reference.
@@ -219,7 +218,6 @@ for proverb in proverbs:
         time.sleep(5)
 
 print("Done!")
-=======
 """
 
 Uses the local list of proverbs created from Wiktionary using getProverbs.py as a reference.
@@ -440,4 +438,3 @@ for proverb in proverbs:
         time.sleep(5)
 
 print("Done!")
->>>>>>> 510bae5e572ef904aba45f8210778f689e0e1c85

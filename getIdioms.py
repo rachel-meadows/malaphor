@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 """
 
 Malaphor generator based on Wiktionary's list of idioms.
@@ -62,7 +61,6 @@ with open('idiomList.txt', 'w') as filehandle:
 filehandle.close()
 
 # Now see simplemalaphor3.py for text processing and working with the data.
-=======
 """
 
 Malaphor generator based on Wiktionary's list of idioms.
@@ -126,4 +124,3 @@ with open('idiomList.txt', 'w') as filehandle:
 filehandle.close()
 
 # Now see simplemalaphor3.py for text processing and working with the data.
->>>>>>> 510bae5e572ef904aba45f8210778f689e0e1c85
