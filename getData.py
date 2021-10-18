@@ -15,6 +15,7 @@ from bs4 import BeautifulSoup
 from wiktionaryparser import WiktionaryParser
 import time
 
+idiomList = []
 def contentsIterator (url, REToFindLinks):
 
     """
@@ -34,7 +35,6 @@ def contentsIterator (url, REToFindLinks):
 
     # Main loop to iterate through all URLs in the index, and add their contents to a local txt file.
     pageCount = 0 # Number of index directory iterated through
-    idiomList = []
     while True:
         if pageCount <= (contentsCount -1):
             # Get the link to a new contents page
