@@ -19,7 +19,7 @@ This generator scrapes Wiktionary's corpus of [https://en.wiktionary.org/wiki/Ca
 
 These malaphors are entirely novel, which makes them fun - every new generation is a roll of the dice!
 
-_And on that note - please be aware that some of idioms in Wiktionary's corpus contain profanity, which is can be passed on to the malaphors._
+_And on that note - please be aware that some of idioms in Wiktionary's corpus contain profanity, which can be passed on to the malaphors._
 
 ## What's the status of this project?
 This is a working version of a command-line program that builds a local text file, then generates simple malaphors from that.

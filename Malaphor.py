@@ -1,10 +1,3 @@
-"""
-
-Malaphor generator based on Wiktionary's list of idioms.
-The file 'GetIdioms.py' is used to extract this list and read it to a local file.
-
-"""
-
 # Imports and initialisations
 import json
 import random
@@ -33,15 +26,13 @@ class style():
     UNDERLINE = '\033[4m'
     RESET = '\033[0m'
 
-# open output file for reading
+# Open output file for reading
 with open('textCorpus.txt', 'r') as filehandle:
     idiomList = json.load(filehandle)
 
 conn = sqlite3.connect('textCorpus.sqlite')
 cur = conn.cursor()
 userIdiom = ""
-
-# nltk.pos_tag(nltk.word_tokenize(idiom1))
 
 wordList = []
 for i in idiomList:
@@ -50,7 +41,7 @@ for i in idiomList:
 wordFrequency = FreqDist(wordList)
 specialWords = sorted(w for w in set(wordList) if len(w) > 4 and wordFrequency[w] > 2)
 
-# Search through all idioms and finds ones that share a word with the current selection
+# Search through all idioms and find ones that share a word with the current selection
 def findWord(comparisonIdiom, n):
     """
     Looks through n other idioms until it finds a word the same or n is up
@@ -78,7 +69,6 @@ def findWord(comparisonIdiom, n):
             # If the computer is selecting a random idiom
             else:
 
-                # Points system if no related words that fit
                 comparisonIdiom = str(random.choice(idiomList)).split()
                 for comparisonWord in comparisonIdiom:
                     if comparisonWord in currentIdiom:
