@@ -3,17 +3,11 @@ import sqlite3
 import urllib.request, urllib.parse, urllib.error, ssl, re, json
 from urllib.request import urlopen
 
-conn = sqlite3.connect('malaphor.sqlite')
+conn = sqlite3.connect('malaphortest.sqlite')
 cur = conn.cursor()
 
 idiom = "jack of all trades"
-
-# Retrieve the name of the idiom
-cur.execute( """
-SELECT Idiom.idiom
-    FROM Idiom
-    WHERE Idiom.idiom = ?""", (idiom , ) )
-name = cur.fetchall()[0][0]
+result = None
 
 # Retrieve the global ID for the idiom
 cur.execute( """
@@ -54,7 +48,7 @@ SELECT Semantic.example
 examples = cur.fetchall()
 
 # Error checking
-print("Name:\n", name, "\n\nID:\n", id, "\n\nGlobal POS:\n", global_pos)
+print("ID:\n", id, "\n\nGlobal POS:\n", global_pos)
 
 print("\nRelated:")
 for i in related:
