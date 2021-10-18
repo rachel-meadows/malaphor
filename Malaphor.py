@@ -5,7 +5,7 @@ The file 'GetIdioms.py' is used to extract this list and read it to a local file
 
 """
 
-# Imports and initial\isations
+# Imports and initialisations
 import json
 import random
 import nltk
@@ -34,10 +34,10 @@ class style():
     RESET = '\033[0m'
 
 # open output file for reading
-with open('idiomList.txt', 'r') as filehandle:
+with open('textCorpus.txt', 'r') as filehandle:
     idiomList = json.load(filehandle)
 
-conn = sqlite3.connect('malaphortest.sqlite')
+conn = sqlite3.connect('textCorpus.sqlite')
 cur = conn.cursor()
 userIdiom = ""
 

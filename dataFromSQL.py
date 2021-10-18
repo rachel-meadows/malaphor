@@ -1,3 +1,6 @@
+# Note: Don't delete this, it isn't in current use but it's to deal with future semantics
+
+
 # Imports and initialisations
 import sqlite3
 import urllib.request, urllib.parse, urllib.error, ssl, re, json
