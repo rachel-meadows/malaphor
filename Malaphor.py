@@ -34,8 +34,8 @@ conn = sqlite3.connect('textCorpus.sqlite')
 cur = conn.cursor()
 result = None
 
-userIdiom = ""
 
+userIdiom = ""
 wordList = []
 for i in idiomList:
     for word in i.split():
@@ -70,7 +70,6 @@ def findWord(comparisonIdiom, n):
 
             # If the computer is selecting a random idiom
             else:
-
                 # Before selecting a random one, look for semantically related ones
                 # i.e. Retrieve the related terms and their types [either 'synonym', 'related_terms', 'see_also','derived_terms' or 'alternative_terms'] as a list of tuples
                 

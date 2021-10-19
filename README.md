@@ -28,6 +28,7 @@ These malaphors are entirely novel, which makes them fun - every new generation 
 
 <sub>_*And on that note - please be aware some idioms in Wiktionary's corpus contain profanity, which can be passed on to the malaphors. At some point [I'll make an optional toggle](https://github.com/rachel-meadows/malaphor/issues/8#issue-1028591792) to filter these out._</sub>
 
+
 ## What's the status of this project?
 This is a working version of a command-line program that builds a local text file and an SQLite database, then generates simple malaphors from these.
 
