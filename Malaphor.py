@@ -32,8 +32,10 @@ with open('textCorpus.txt', 'r') as filehandle:
 
 conn = sqlite3.connect('textCorpus.sqlite')
 cur = conn.cursor()
-userIdiom = ""
+result = None
 
+
+userIdiom = ""
 wordList = []
 for i in idiomList:
     for word in i.split():
@@ -68,7 +70,38 @@ def findWord(comparisonIdiom, n):
 
             # If the computer is selecting a random idiom
             else:
+                # Before selecting a random one, look for semantically related ones
+                # i.e. Retrieve the related terms and their types [either 'synonym', 'related_terms', 'see_also','derived_terms' or 'alternative_terms'] as a list of tuples
+                
+                cur.execute( """
+                SELECT Related.related, Related.type
+                    FROM Idiom JOIN Related
+                    ON Idiom.id = Related.idiom_id
+                    WHERE Idiom.idiom = ?""", ( wholeCurrentIdiom, ) )
+                try:
+                    related = cur.fetchall()
+                    # Error checking
+                    print("Idiom:\n", wholeCurrentIdiom,  "\nRelated:\n", related)
+                except:
+                    pass
 
+                for comparisonIdiom, relatedType in related:
+                    # This regex stops the context of the related idiom being given, which often results in the context being merged with the original idiom to make boring outputs / doubles like:
+                    # "jump the queue" + "(US) jump the line" --> "(US) jump the queue"
+                    comparisonIdiom = re.sub(r"\([^()]*\)", "", comparisonIdiom) 
+                    # TODO: Get rid of the : that often appears with parentheses as well
+                    
+                    for comparisonWord in comparisonIdiom.split():      
+                        if comparisonWord in currentIdiom:
+                        
+                        # Error checking
+                        #print("\n\nOH ME OH MY A TEST CASE\n\nCurrent idiom\n", currentIdiom, "\nComparison word:\n", comparisonWord, "\nComparisonIdiom\n", comparisonIdiom)
+
+                            return(comparisonWord, comparisonIdiom.split())
+                        else:
+                            continue
+
+                # Points system if no related words that fit
                 comparisonIdiom = str(random.choice(idiomList)).split()
                 for comparisonWord in comparisonIdiom:
                     if comparisonWord in currentIdiom:
@@ -95,11 +128,11 @@ def findWord(comparisonIdiom, n):
                         except: # Some phrases end with the comparisonWord, this avoids out of range error
                             pass
 
-                    if points >= 9: # Edut this for more / less strict filtering
+                    if points >= 9: # Edit this for more / less strict filtering
                         return(comparisonWord, comparisonIdiom)
                     else:
 
-                        # This section can be uncommented to see if the current model looks fair (i.e. "are 'good' idioms being prioritised?").
+                        # This section can be uncommented to see if the current model looks fair (i.e. "are 'good' idioms being prioritised?")
                         """
                         if points > 1: #i.e. at least one word matches
                             print("\nThe idioms being merged are:\n    " + style.RED + " ".join(currentIdiom) + "\n    " + " ".join(comparisonIdiom) + \
@@ -145,38 +178,52 @@ while True:
     if userIdiom != "":
         currentIdiom = userIdiom.split()
     else:
-        currentIdiom = str(random.choice(idiomList)).split()
+        wholeCurrentIdiom = str(random.choice(idiomList))
+        currentIdiom = wholeCurrentIdiom.split()
 
     matchTuple = findWord("", 10)
 
     if matchTuple != None:
         wordMatch = matchTuple[0]
         idiomMatch = matchTuple[1]
-        if currentIdiom[-1] != wordMatch and currentIdiom[0] != wordMatch and not (# If the match is the first or last word, swapping the sentences will result in a duplicate of the original sentence
-        len(currentIdiom) == 3 and len(idiomMatch) ==3 and currentIdiom[1] == wordMatch): # If they are both 3 words long and have the same middle word, swapping the sentences will result in a duplicate of the original sentence
-            print("\n\nThe idioms being merged are:\n    " + style.CYAN + " ".join(currentIdiom), "\n   ", " ".join(idiomMatch) + style.RESET)
-            break
 
-# Locate shared word in each idiom
-currentIdiomIndex = currentIdiom.index(wordMatch)
-newIdiomIndex = idiomMatch.index(wordMatch)
+    else:
+        continue
 
-# Usually, swapping a word into the longer sentence makes for a more interesting malaphor.
-# However, this is dependent on where the matching word is in the sentence. This picks the idiom with the most words before the matching word to start.
-if currentIdiomIndex > newIdiomIndex:
-    startingIdiom = currentIdiom
-    endingIdiom = idiomMatch
-elif currentIdiomIndex <= newIdiomIndex: # Not doing a random choice if they're equal length since the original idiom was random anyway.
-    startingIdiom = idiomMatch
-    endingIdiom = currentIdiom
-malaphor = (" ".join(startingIdiom[0:startingIdiom.index(wordMatch)]) + " " + " ".join(endingIdiom[endingIdiom.index(wordMatch):]))
+    # Locate shared word in each idiom
+    currentIdiomIndex = currentIdiom.index(wordMatch)
+    newIdiomIndex = idiomMatch.index(wordMatch)
 
-# More of the original context is usually funnier, but only if it's a natural progression point
-if len(malaphor.split()) < len(startingIdiom):
-    addition = startingIdiom [ len(malaphor.split()) : ]
-    malaphor = malaphor + " " + " ".join(addition)
+    # Usually, swapping a word into the longer sentence makes for a more interesting malaphor.
+    # However, this is dependent on where the matching word is in the sentence. This picks the idiom with the most words before the matching word to start.
+    if currentIdiomIndex > newIdiomIndex:
+        startingIdiom = currentIdiom
+        endingIdiom = idiomMatch
+    elif currentIdiomIndex <= newIdiomIndex: # Not doing a random choice if they're equal length since the original idiom was random anyway.
+        startingIdiom = idiomMatch
+        endingIdiom = currentIdiom
+    malaphor = (" ".join(startingIdiom[0:startingIdiom.index(wordMatch)]) + " " + " ".join(endingIdiom[endingIdiom.index(wordMatch):]))
 
-elif len(malaphor.split()) < len(endingIdiom):
-    addition = endingIdiom [ len(malaphor.split()) : ]
-    malaphor = malaphor + " ".join(addition)
+    # More of the original context is usually funnier, but only if it's a natural progression point
+    # I may need to reconsider this one
+    if len(malaphor.split()) < len(startingIdiom):
+        addition = startingIdiom [ len(malaphor.split()) : ]
+        malaphor = malaphor + " " + " ".join(addition)
+
+    elif len(malaphor.split()) < len(endingIdiom):
+        addition = endingIdiom [ len(malaphor.split()) : ]
+        malaphor = malaphor + " ".join(addition)
+
+    # Get rid of duplicates
+    # print("Malaphor:", malaphor, "\nStarting idiom:", str(" ".join(startingIdiom)), "\nEnding idiom:", str(" ".join(endingIdiom)))  # Error checking
+    if malaphor.strip() == str(" ".join(startingIdiom)) or malaphor.strip() == str(" ".join(endingIdiom)):
+        continue
+    # If the match is the first or last word with a short sentence, it's usually boring
+    # E.g. "take down a notch" + "come down the pike" --> "come down a notch"
+    elif ( (currentIdiom[-1] == wordMatch and currentIdiom[0] == wordMatch) and (len(idiomMatch) <= 4) ):
+        continue
+    else:
+        break
+
+print("\nThe idioms being merged are:\n    " + style.CYAN + " ".join(currentIdiom), "\n   ", " ".join(idiomMatch) + style.RESET)
 print("\nThe malaphor:\n    " + style.GREEN + malaphor + style.RESET + "\n")

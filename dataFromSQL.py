@@ -6,7 +6,7 @@ import sqlite3
 import urllib.request, urllib.parse, urllib.error, ssl, re, json
 from urllib.request import urlopen
 
-conn = sqlite3.connect('malaphortest.sqlite')
+conn = sqlite3.connect('textCorpus.sqlite')
 cur = conn.cursor()
 
 idiom = "jack of all trades"
