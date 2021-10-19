@@ -82,15 +82,21 @@ def findWord(comparisonIdiom, n):
                 try:
                     related = cur.fetchall()
                     # Error checking
-                    # print("Idiom:\n", wholeCurrentIdiom,  "\nRelated:\n", related)
+                    print("Idiom:\n", wholeCurrentIdiom,  "\nRelated:\n", related)
                 except:
                     pass
 
                 for comparisonIdiom, relatedType in related:
+                    # This regex stops the context of the related idiom being given, which often results in the context being merged with the original idiom to make boring outputs / doubles like:
+                    # "jump the queue" + "(US) jump the line" --> "(US) jump the queue"
+                    comparisonIdiom = re.sub(r"\([^()]*\)", "", comparisonIdiom) 
+                    # TODO: Get rid of the : that often appears with parentheses as well
+                    
                     for comparisonWord in comparisonIdiom.split():      
                         if comparisonWord in currentIdiom:
-
-                        #print("\n\nOH HO HO A TEST CASE\n\nCurrent idiom\n", currentIdiom, "\nComparison word:\n", comparisonWord, "\nComparisonIdiom\n", comparisonIdiom)
+                        
+                        # Error checking
+                        #print("\n\nOH ME OH MY A TEST CASE\n\nCurrent idiom\n", currentIdiom, "\nComparison word:\n", comparisonWord, "\nComparisonIdiom\n", comparisonIdiom)
 
                             return(comparisonWord, comparisonIdiom.split())
                         else:
@@ -123,11 +129,11 @@ def findWord(comparisonIdiom, n):
                         except: # Some phrases end with the comparisonWord, this avoids out of range error
                             pass
 
-                    if points >= 9: # Edut this for more / less strict filtering
+                    if points >= 9: # Edit this for more / less strict filtering
                         return(comparisonWord, comparisonIdiom)
                     else:
 
-                        # This section can be uncommented to see if the current model looks fair (i.e. "are 'good' idioms being prioritised?").
+                        # This section can be uncommented to see if the current model looks fair (i.e. "are 'good' idioms being prioritised?")
                         """
                         if points > 1: #i.e. at least one word matches
                             print("\nThe idioms being merged are:\n    " + style.RED + " ".join(currentIdiom) + "\n    " + " ".join(comparisonIdiom) + \
@@ -200,6 +206,7 @@ while True:
     malaphor = (" ".join(startingIdiom[0:startingIdiom.index(wordMatch)]) + " " + " ".join(endingIdiom[endingIdiom.index(wordMatch):]))
 
     # More of the original context is usually funnier, but only if it's a natural progression point
+    # I may need to reconsider this one
     if len(malaphor.split()) < len(startingIdiom):
         addition = startingIdiom [ len(malaphor.split()) : ]
         malaphor = malaphor + " " + " ".join(addition)
@@ -209,12 +216,15 @@ while True:
         malaphor = malaphor + " ".join(addition)
 
     # Get rid of duplicates
-    print("Malaphor:", malaphor, "\nStarting idiom:", str(" ".join(startingIdiom)), "\nEnding idiom:", str(" ".join(endingIdiom)))
+    # print("Malaphor:", malaphor, "\nStarting idiom:", str(" ".join(startingIdiom)), "\nEnding idiom:", str(" ".join(endingIdiom)))  # Error checking
     if malaphor.strip() == str(" ".join(startingIdiom)) or malaphor.strip() == str(" ".join(endingIdiom)):
+        continue
+    # If the match is the first or last word with a short sentence, it's usually boring
+    # E.g. "take down a notch" + "come down the pike" --> "come down a notch"
+    elif ( (currentIdiom[-1] == wordMatch and currentIdiom[0] == wordMatch) and (len(idiomMatch) <= 4) ):
         continue
     else:
         break
 
-
-print("\n\nThe idioms being merged are:\n    " + style.CYAN + " ".join(currentIdiom), "\n   ", " ".join(idiomMatch) + style.RESET)
+print("\nThe idioms being merged are:\n    " + style.CYAN + " ".join(currentIdiom), "\n   ", " ".join(idiomMatch) + style.RESET)
 print("\nThe malaphor:\n    " + style.GREEN + malaphor + style.RESET + "\n")
