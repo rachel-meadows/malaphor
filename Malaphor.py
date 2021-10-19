@@ -209,8 +209,8 @@ while True:
         malaphor = malaphor + " ".join(addition)
 
     # Get rid of duplicates
-    print("Malaphor: ", malaphor, "\nStarting idiom:", str(" ".join(startingIdiom)), "\nEnding idiom:", str(" ".join(endingIdiom)))
-    if malaphor == str(" ".join(startingIdiom)) or malaphor == str(" ".join(endingIdiom)):
+    print("Malaphor:", malaphor, "\nStarting idiom:", str(" ".join(startingIdiom)), "\nEnding idiom:", str(" ".join(endingIdiom)))
+    if malaphor.strip() == str(" ".join(startingIdiom)) or malaphor.strip() == str(" ".join(endingIdiom)):
         continue
     else:
         break
