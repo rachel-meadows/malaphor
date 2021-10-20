@@ -167,28 +167,48 @@ def findWord(comparisonIdiom, n):
                     break
 
 while True:
-    userChoice = input("Do you want to submit your own idiom? (Y/N)\n")
+    userChoice = input("Do you want to submit your own idiom? (y/n)\n")
     if userChoice.lower() == "y":
         userChoice = True
         userIdiom = str(input("\nWhat idiom are you looking for?\n").lower())
 
         # Retrieve the name of the idiom
-        cur.execute( """
-        SELECT Idiom.idiom
+        try:
+            cur.execute( """
+            SELECT Idiom.idiom
             FROM Idiom
             WHERE Idiom.idiom = ?""", (userIdiom, ) )
-        try:
             name = cur.fetchall()[0][0].lower()
             break
+
         except:
-            print("\nLooks like Wiktionary doesn't have that idiom - you might want to:\n- Check your spelling\n- Try another idiom\n- Let the program choose an idiom\n")
-            userIdiom = ""
-            continue
+            try:
+                cur.execute("""
+                SELECT Idiom.idiom
+                FROM Idiom
+                WHERE Idiom.idiom LIKE ?""", ( "%" + userIdiom + "%", ) ) # Finds sentence fragment with extra words at start or end
+
+                name = (cur.fetchall())[0][0].lower()
+                print("Looks like Wiktionary doesn't have that idiom. However, it does have '" + name + "'.\nIs that what you were looking for? (y/n)")
+                matchCorrect = input()
+                if matchCorrect.lower() == "y":
+                    userIdiom = name
+                    break
+                elif matchCorrect.lower() == "n":
+                    userIdiom = ""
+                    continue
+                else:
+                    print("Please type 'y' or 'n'.")
+                    continue
+            except:
+                print("\nLooks like Wiktionary doesn't have that idiom - you might want to:\n- Check your spelling\n- Try another idiom\n- Let the program choose an idiom\n")
+                userIdiom = ""
+                continue
     elif userChoice.lower() == "n":
         userChoice = False
         break
     else:
-        print("Please type 'Y' or 'N'.")
+        print("Please type 'y' or 'n'.")
         continue
 
 # If no match found after 10 (n) iterations, the current idiom is swapped (as it may consist of unusual / unique words not present in other idioms)
@@ -231,10 +251,6 @@ while True:
         addition = endingIdiom [ len(malaphor.split()) : ]
         malaphor = malaphor + " ".join(addition)
 
-
-    if "one's" in malaphor:
-        malaphor = malaphor.replace(" one's ", " your ") # More personal = more entertaining
-
     # Get rid of duplicates
     # print("Malaphor:", malaphor, "\nStarting idiom:", str(" ".join(startingIdiom)), "\nEnding idiom:", str(" ".join(endingIdiom)))  # Error checking
     if malaphor.strip() == str(" ".join(startingIdiom)) or malaphor.strip() == str(" ".join(endingIdiom)):
@@ -245,6 +261,9 @@ while True:
         continue
     else:
         break
+
+    if "one's" in malaphor:
+        malaphor = malaphor.replace(" one's ", " your ") # More personal = more entertaining
 
 print("\nThe idioms being merged are:\n    " + style.CYAN + " ".join(currentIdiom), "\n   ", " ".join(idiomMatch) + style.RESET)
 
