@@ -38,22 +38,34 @@ I'm in the process of a) using the database to refine the text output to better 
 Here are some of the script's better malaphors:
 
 **The idioms being merged:**
-    clear cut 
-    cut and dried
+
+- clear cut 
+- cut and dried
 
 **The resulting malaphor:**
-    clear cut and dried
+
+clear cut and dried
+
+
 
 **The idioms being merged:**
-    strike while the iron is hot 
-    make hay while the sun shines
+
+- strike while the iron is hot 
+
+- make hay while the sun shines
 
 **The resulting malaphor:**
-    make hay while the iron is hot
+
+make hay while the iron is hot
+
+
 
 **The idioms being merged:**
-    put one's name in the hat 
-    throw one's hat in the ring
+
+- put one's name in the hat
+
+- throw one's hat in the ring
 
 **The resulting malaphor:**
-    throw one's name in the hat
+
+throw one's name in the hat
