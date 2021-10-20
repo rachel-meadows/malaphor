@@ -26,22 +26,39 @@ class style():
     UNDERLINE = '\033[4m'
     RESET = '\033[0m'
 
-# Open output file for reading
-with open('textCorpus.txt', 'r') as filehandle:
-    idiomList = json.load(filehandle)
-
 conn = sqlite3.connect('textCorpus.sqlite')
 cur = conn.cursor()
 result = None
 
 userIdiom = ""
 
+cur.execute( """
+    SELECT idiom FROM Idiom""", )
+try:
+    idiomList = cur.fetchall()
+except:
+    pass
+
 wordList = []
 for i in idiomList:
-    for word in i.split():
+    # print('i', i[0]) # Sub 0 because this is stored as a tuple in the database
+    for word in i[0].split():
         wordList.append(word)
 wordFrequency = FreqDist(wordList)
 specialWords = sorted(w for w in set(wordList) if len(w) > 4 and wordFrequency[w] > 2)
+
+# Get a random idiom to compare against
+def randomIdiom(randomIdiom):
+
+    cur.execute( """
+    SELECT idiom FROM Idiom ORDER BY RANDOM() LIMIT 1""", )
+    try:
+        randomIdiom = cur.fetchall()
+        randomIdiom = randomIdiom[0][0]
+        return randomIdiom
+    except:
+        pass
+
 
 # Search through all idioms and find ones that share a word with the current selection
 def findWord(comparisonIdiom, n):
@@ -56,7 +73,7 @@ def findWord(comparisonIdiom, n):
 
             # If the user has selected an idiom
             if userIdiom != "":
-                comparisonIdiom = str(random.choice(idiomList)).split()
+                comparisonIdiom = str( randomIdiom(randomIdiom) ).split()
                 for comparisonWord in comparisonIdiom:
                     if comparisonWord in currentIdiom:
                         return(comparisonWord, comparisonIdiom)
@@ -103,7 +120,7 @@ def findWord(comparisonIdiom, n):
                             continue
 
                 # Points system if no related words that fit
-                comparisonIdiom = str(random.choice(idiomList)).split()
+                comparisonIdiom = str( randomIdiom(randomIdiom) ).split()
                 for comparisonWord in comparisonIdiom:
                     if comparisonWord in currentIdiom:
                         points += (len(comparisonIdiom + currentIdiom) * 0.4) # Longer idioms are usually more interesting, but they don't both need to be long
@@ -179,7 +196,7 @@ while True:
     if userIdiom != "":
         currentIdiom = userIdiom.split()
     else:
-        wholeCurrentIdiom = str(random.choice(idiomList))
+        wholeCurrentIdiom = str( randomIdiom(randomIdiom) )
         currentIdiom = wholeCurrentIdiom.split()
 
     matchTuple = findWord("", 10)
