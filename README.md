@@ -34,7 +34,7 @@ This is a working version of a command-line program that builds a local text fil
 
 I'm in the process of a) using the database to refine the text output to better reflect semantic content, and b) building a front end for the program so it is accessible to users without having to download this code and re-scrape the data.
 
-## Fun: Examples from the program so far
+## Examples from the program so far
 Here are some of the script's better malaphors:
 
 **The idioms being merged:**
@@ -46,7 +46,7 @@ Here are some of the script's better malaphors:
 
 clear cut and dried
 
-
+<br/>
 
 **The idioms being merged:**
 
@@ -58,7 +58,7 @@ clear cut and dried
 
 make hay while the iron is hot
 
-
+<br/>
 
 **The idioms being merged:**
 
