@@ -41,7 +41,6 @@ except:
 
 wordList = []
 for i in idiomList:
-    # print('i', i[0]) # Sub 0 because this is stored as a tuple in the database
     for word in i[0].split():
         wordList.append(word)
 wordFrequency = FreqDist(wordList)
@@ -58,7 +57,6 @@ def randomIdiom(randomIdiom):
         return randomIdiom
     except:
         pass
-
 
 # Search through all idioms and find ones that share a word with the current selection
 def findWord(comparisonIdiom, n):
@@ -81,7 +79,7 @@ def findWord(comparisonIdiom, n):
                         continue
                 userIdiomCount += 1
                 if userIdiomCount >= 8000:
-                    print(style.RED + "\nSorry, a match can't be found for this idiom.\n\n" + style.RESET)
+                    print(style.RED + "\nSorry, a match can't be found for this idiom.\nIt may be too short / use only unique words.\n\n" + style.RESET)
                     userIdiomCount = 0
                     quit()
 
@@ -111,10 +109,8 @@ def findWord(comparisonIdiom, n):
 
                     for comparisonWord in comparisonIdiom.split():      
                         if comparisonWord in currentIdiom:
-
                         # Error checking
                         #print("\n\nOH ME OH MY A TEST CASE\n\nCurrent idiom\n", currentIdiom, "\nComparison word:\n", comparisonWord, "\nComparisonIdiom\n", comparisonIdiom)
-
                             return(comparisonWord, comparisonIdiom.split())
                         else:
                             continue
@@ -123,22 +119,22 @@ def findWord(comparisonIdiom, n):
                 comparisonIdiom = str( randomIdiom(randomIdiom) ).split()
                 for comparisonWord in comparisonIdiom:
                     if comparisonWord in currentIdiom:
-                        points += (len(comparisonIdiom + currentIdiom) * 0.4) # Longer idioms are usually more interesting, but they don't both need to be long
+                        points += (len(comparisonIdiom + currentIdiom) * 0.3) # Longer idioms are usually more interesting, but they don't both need to be long
                         if comparisonWord in ["ones", "one's"]: # There are a LOT of these, they get boring after a while
                             points -= 3
                         if comparisonWord not in ["and", "the", "one's", "in", "on", "a", "for", "of", "ones"]: # More generic = less interesting
                             points += 3
-                        if comparisonWord in specialWords: # longer words shared across more idioms
+                        if comparisonWord in specialWords: # These are longer words shared across more idioms
                             points += 4
-                        if len(comparisonWord) > 3: # More generic = less interesting, and longer words usually more specialised
+                        if len(comparisonWord) > 3: # More generic = less interesting, and longer words are usually more specialised
                             points += ( (len(comparisonWord)) * 0.7 )
                         try:
                             if comparisonIdiom[comparisonIdiom.index(comparisonWord) + 1] not in ["the", "one", "one's"]:
-                                # this only makes sense if it's not 'in the' etc.
+                                # The following criteria only makes sense if it's not 'in the' etc.
                                 try:
                                     if comparisonIdiom[comparisonIdiom.index(comparisonWord) + 1][0] == currentIdiom[currentIdiom.index(comparisonWord) + 1][0]: # Sounds better if the next word starts with the same letter
                                         if comparisonIdiom[comparisonIdiom.index(comparisonWord) + 1] == currentIdiom[currentIdiom.index(comparisonWord) + 1]: #i.e. they're the same word
-                                            points += 3
+                                            points += 4
                                         else: # If the following word starts with the same letter, but is not that word, it's better
                                             points += 5
                                 except: # Some phrases end with the comparisonWord, this avoids out of range error
@@ -146,7 +142,7 @@ def findWord(comparisonIdiom, n):
                         except: # Some phrases end with the comparisonWord, this avoids out of range error
                             pass
 
-                    if points >= 9: # Edit this for more / less strict filtering
+                    if points >= 10: # Edit this for more / less strict filtering
                         return(comparisonWord, comparisonIdiom)
                     else:
 
@@ -242,14 +238,17 @@ while True:
     malaphor = (" ".join(startingIdiom[0:startingIdiom.index(wordMatch)]) + " " + " ".join(endingIdiom[endingIdiom.index(wordMatch):]))
 
     # More of the original context is usually funnier, but only if it's a natural progression point
-    # I may need to reconsider this one
-    if len(malaphor.split()) < len(startingIdiom):
-        addition = startingIdiom [ len(malaphor.split()) : ]
-        malaphor = malaphor + " " + " ".join(addition)
+    # I'm using length as a rough heuristic for this (e.g. if the malaphor is aready 10+ words, it probably doesn't need the wraparound end)
+    if len(malaphor) <= 10:
+        if len(malaphor.split()) < len(startingIdiom):
+            addition = startingIdiom [ len(malaphor.split()) : ]
+            malaphor = malaphor + " " + " ".join(addition)
 
-    elif len(malaphor.split()) < len(endingIdiom):
-        addition = endingIdiom [ len(malaphor.split()) : ]
-        malaphor = malaphor + " ".join(addition)
+        elif len(malaphor.split()) < len(endingIdiom):
+            addition = endingIdiom [ len(malaphor.split()) : ]
+            malaphor = malaphor + " ".join(addition)
+    else:
+        pass
 
     # Get rid of duplicates
     # print("Malaphor:", malaphor, "\nStarting idiom:", str(" ".join(startingIdiom)), "\nEnding idiom:", str(" ".join(endingIdiom)))  # Error checking
