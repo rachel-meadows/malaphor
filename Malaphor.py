@@ -214,6 +214,10 @@ while True:
         addition = endingIdiom [ len(malaphor.split()) : ]
         malaphor = malaphor + " ".join(addition)
 
+
+    if "one's" in malaphor:
+        malaphor = malaphor.replace(" one's ", " your ") # More personal = more entertaining
+
     # Get rid of duplicates
     # print("Malaphor:", malaphor, "\nStarting idiom:", str(" ".join(startingIdiom)), "\nEnding idiom:", str(" ".join(endingIdiom)))  # Error checking
     if malaphor.strip() == str(" ".join(startingIdiom)) or malaphor.strip() == str(" ".join(endingIdiom)):
