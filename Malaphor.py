@@ -9,6 +9,8 @@ import time
 import sqlite3
 import urllib.request, urllib.parse, urllib.error, ssl, re, json
 from urllib.request import urlopen
+from profanityfilter import ProfanityFilter
+pf = ProfanityFilter()
 
 # System call so colour works in console
 os.system("")
@@ -107,6 +109,15 @@ def findWord(comparisonIdiom, n):
                     comparisonIdiom = re.sub(r"\([^()]*\): ", "", comparisonIdiom)
                     comparisonIdiom = re.sub(r"\([^()]*\)", "", comparisonIdiom)
 
+                    if profanityFilter == True:
+                        profanity = pf.is_profane(str(comparisonIdiom))
+                        if profanity == True:
+                            continue
+                        else:
+                            pass
+                    else:
+                        pass
+
                     for comparisonWord in comparisonIdiom.split():      
                         if comparisonWord in currentIdiom:
                         # Error checking
@@ -119,6 +130,15 @@ def findWord(comparisonIdiom, n):
                 comparisonIdiom = str( randomIdiom(randomIdiom) ).split()
                 for comparisonWord in comparisonIdiom:
                     if comparisonWord in currentIdiom:
+                        if profanityFilter == True:
+                            profanity = pf.is_profane(str(comparisonIdiom))
+                            if profanity == True:
+                                continue
+                            else:
+                                pass
+                        else:
+                            pass
+
                         points += (len(comparisonIdiom + currentIdiom) * 0.3) # Longer idioms are usually more interesting, but they don't both need to be long
                         if comparisonWord in ["ones", "one's"]: # There are a LOT of these, they get boring after a while
                             points -= 3
@@ -202,6 +222,20 @@ while True:
                 continue
     elif userChoice.lower() == "n":
         userChoice = False
+        break
+    else:
+        print("Please type 'y' or 'n'.")
+        continue
+
+# Check if the user wants a profanity filter on
+while True:
+    profanity = input("Do you want a profanity filter applied? (y/n)\n")
+    if profanity.lower() == "y":
+        profanityFilter = True
+        print("\nYou got it! Some things may slip by the filter, but idioms containing common swear words have been removed.\n")
+        break
+    elif profanity.lower() == "n":
+        profanityFilter = False
         break
     else:
         print("Please type 'y' or 'n'.")
