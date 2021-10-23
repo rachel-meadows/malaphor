@@ -2,9 +2,52 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+body {
+    background-color: white;
 }
 
 h1 {
     text-align: center;
     margin: 20px auto;
+}
+
+.malaphor-container {
+    background-color: rgb(95, 115, 230);
+    display: flex;
+    flex-direction: column;
+    padding: 3vh;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#generated-malaphors {
+    padding: 3vh;
+    width: 70vh;
+    background-color: rgb(180, 180, 180);
+    text-align: center;
+    min-height: 100px;
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: rgb(51, 51, 51) solid 1px;
+    border-radius: 2px;
+}
+
+button {
+    padding: 10px 20px;
+    color: white;
+    font-weight: 500;
+    font-size: 17px;
+    background-color: rgb(7, 90, 7);
+    border: 2px solid rgb(8, 59, 8);
+    border-radius: 3px;
+}
+
+button:hover {
+    box-shadow: 2px 1px 2px rgba(8, 8, 8, 0.8);
+    cursor: pointer;
 }
