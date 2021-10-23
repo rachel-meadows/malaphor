@@ -24,6 +24,9 @@
                 <span class="slider"></span>
             </label>
         </div>
+        <div id="user-input-field">
+            <div>Input here</div>
+        </div>
         <div id="profanity-filter" class="settings-container">
             <div class="settings-text">Profanity filter</div>
                 <label class="switch">
@@ -45,17 +48,21 @@
 
         </div>
     </div>
-    <hr/>
-    <h2>What is a 'malaphor'?</h2>
-    <p>A malaphor is a blend of common sayings or idioms. For example, "We'll burn that bridge when we come to it" is a cross between "burn your bridges" and "we'll cross that bridge when we come to it".
-    </p>
 
-    <h2>How does this site work?</h2>
-    <p>This site runs off a Python program that takes Wictionary's list of idioms + proverbs, and uses
-        the Python library (natural language toolkit) to merge idioms together. There are a series of algorithms the program runs through, with preference given to pairs that are semantically similar or contain similar text (or both!).</p>
-    <h2>Want to learn more?</h2>
-    <button>Read the full writeup on my blog</button>
-    <button>See my other projects</button>
+    <hr/>
+
+    <div class="info-container">
+        <div class="info">
+            <h2>What is a 'malaphor'?</h2>
+            <p>A malaphor is a blend of common sayings or idioms. For example, "We'll burn that bridge when we come to it" is a cross between "burn your bridges" and "we'll cross that bridge when we come to it".
+            </p>
+            <h2>How does this site work?</h2>
+            <p>This site runs off a Python program that takes Wictionary's list of <a href="https://en.wiktionary.org/wiki/Category:English_idioms" target=_blank>idioms</a> and <a href="https://en.wiktionary.org/wiki/Category:English_proverbs" target=_blank>proverbs</a>, and uses Python and SQLite to merge idioms together. There are a series of algorithms the program runs through, with preference given to pairs that are semantically similar or contain similar text (or both!).</p>
+            <h2>Want to learn more?</h2>
+            <button>Read the full writeup on my blog</button>
+            <button>See my other projects</button>
+        </div>
+    </div>
 
     <footer>
         <a>Github</a>
