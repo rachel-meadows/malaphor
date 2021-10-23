@@ -10,13 +10,18 @@
 </head>
 
 <body>
+    <div class ="navigation">
+        <a href="#page-start">Home</a>
+        <a href="#settings-start">Settings</a>
+        <a href="#about-start">About</a>
+    </div>
     <div class="malaphor-container">
-        <h1>Malaphor Generator</h1>
+        <h1 id="page-start">Malaphor Generator</h1>
         <div id="generated-malaphors">Random malaphor goes here</div>
         <button>New malaphor</button>
     </div>
     <div class="options">
-        <h2>Settings:</h2>
+        <h2 id="settings-start">Settings:</h2>
         <div id="user-input" class="settings-container">
             <div class="settings-text">Choose the starting proverb</div>
             <label class="switch">
@@ -40,9 +45,9 @@
             <div id="dropdown-container" class="dropdown">
                 <div class="dropdown-button">▼</div>
                 <div class="dropdown-content">
-                    <a href ="#">Algorithm 1</a>
-                    <a href ="#">Algorithm 2</a>
-                    <a href ="#">Algorithm 3</a>
+                    <a href ="#">Split on nouns only</a>
+                    <a href ="#">Split on verbs only</a>
+                    <a href ="#">Split after propositions only</a>
                 </div>
             </div>
 
@@ -51,11 +56,12 @@
 
     <div class="info-container">
         <div class="info">
-            <h2>What is a 'malaphor'?</h2>
+            <h2 id="about-start">What is a 'malaphor'?</h2>
             <p>A malaphor is a blend of common sayings or idioms. For example, "We'll burn that bridge when we come to it" is a cross between "burn your bridges" and "we'll cross that bridge when we come to it".
             </p>
             <h2>How does this site work?</h2>
-            <p>This site runs off a Python program that takes Wictionary's list of <a href="https://en.wiktionary.org/wiki/Category:English_idioms" target=_blank>idioms</a> and <a href="https://en.wiktionary.org/wiki/Category:English_proverbs" target=_blank>proverbs</a>, and uses Python and SQLite to merge idioms together. There are a series of algorithms the program runs through, with preference given to pairs that are semantically similar or contain similar text (or both!).</p>
+            <p>This site runs off a Python program that takes Wictionary's list of <a href="https://en.wiktionary.org/wiki/Category:English_idioms" target=_blank>idioms</a> and <a href="https://en.wiktionary.org/wiki/Category:English_proverbs" target=_blank>proverbs</a>, and uses Python and SQLite to merge idioms together.</p>
+            <p>There are a series of algorithms the program runs through, with preference given to pairs that are semantically similar or contain similar text (or both!).</p>
             <h2>Want to learn more?</h2>
             <button>Read the full writeup on my blog</button>
             <button>See my other projects</button>

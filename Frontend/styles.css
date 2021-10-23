@@ -38,16 +38,31 @@ a {
     text-decoration: none;
 }
 
-footer a {
-    color: rgb(110, 110, 110);
+footer a , header a {
+    color: rgb(146, 146, 146);
     padding: 1vh 2vh;
 }
 
+footer a , .navigation a , .navigation a:visited {
+    color: rgb(146, 146, 146);
+    padding: 1vh 2vh;
+}
 
-a:hover {
+footer a:hover , .navigation a:visited:hover {
     color: var(--secondary-text-light);
     background-color: rgba(9, 0, 136, 0.05);
     border-radius: 3px;
+}
+
+.navigation {
+    padding: 4vh 3vh 6vh 3vh;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: var(--background-color2);
+    padding: 1vh 2vh 1vh 10vh;
+    gap: 30px;
+    color: var(--secondary-text-light);
 }
 
 .malaphor-container {
@@ -255,7 +270,7 @@ footer {
 .logo {
     height: 30px;
     width: auto;
-    filter: brightness(3);
+    filter: brightness(4);
 }
 
 .logo:hover {
