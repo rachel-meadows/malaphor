@@ -1,3 +1,18 @@
+:root { 
+    /**
+    --background-color1: rgb(95, 115, 230);
+    --background-color2: green;
+    **/
+    --background-color1: #7ec8e3;
+    --background-color2: #000C66;
+    --secondary-color: #050A30;
+    --secondary-text-light: white;
+    --secondary-text-dark: black;
+    --button-color: #2196f3;
+    --button-text: #050A30;
+    --button-border: rgba(0, 12, 102, 0.397);
+}
+
 * {
     padding: 0;
     margin: 0;
@@ -15,20 +30,28 @@ h1 {
     font-size: 40px;
 }
 
+h2 {
+    font-size: 25px;
+}
+
 a {
     text-decoration: none;
-    color: rgb(10, 10, 10);
+}
+
+footer a {
+    color: rgb(110, 110, 110);
     padding: 1vh 2vh;
 }
 
+
 a:hover {
-    color: rgb(0, 0, 0);
+    color: var(--secondary-text-light);
     background-color: rgba(9, 0, 136, 0.05);
     border-radius: 3px;
 }
 
 .malaphor-container {
-    background-color: rgb(95, 115, 230);
+    background-color: var(--background-color1);
     display: flex;
     flex-direction: column;
     padding: 4vh 3vh 6vh 3vh;
@@ -38,26 +61,29 @@ a:hover {
 
 #generated-malaphors {
     padding: 3vh;
-    width: 70vh;
-    background-color: rgb(180, 180, 180);
+    width: 90vh;
+    font-size: 20px;
+    background-color: var(--secondary-color);
     text-align: center;
     min-height: 150px;
     margin: 20px auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    border: rgb(51, 51, 51) solid 1px;
-    border-radius: 2px;
+    border-radius: 4px;
+    color: var(--secondary-text-light);
 }
 
 button {
     padding: 5px 15px;
-    color: white;
+    color: var(--button-text);
     font-weight: 500;
     font-size: 20px;
-    background-color: rgb(7, 90, 7);
-    border: 2px solid rgb(8, 59, 8);
+    border: none;
+    background-color: var(--button-color);
+    box-shadow: 1px 1px 1px var(--button-border);
     border-radius: 4px;
+    font-weight: 600;
 }
 
 button:hover {
@@ -71,7 +97,8 @@ button:hover {
     justify-content: center;
     align-items: center;
     gap: 10px;
-    background-color: green;
+    background-color: var(--background-color2);
+    color: var(--secondary-text-light);
     padding: 6vh 3vh;
 }
 
@@ -80,10 +107,10 @@ button:hover {
     justify-content: space-between;
     align-items: center;
     gap: 10px;
-    font-size: 20px;
-    background-color: rgba(7, 90, 7, 0.7);
+    font-size: 22px;
+    background-color: var(--background-color2);
     padding: 5px 15px;
-    width: 60vh;
+    width: 65vh;
 }
 
 .settings-text {
@@ -96,15 +123,15 @@ button:hover {
     display: inline-block;
     width: 60px;
     height: 34px;
-  }
+}
 
-  .switch input {
+.switch input {
     opacity: 0;
     width: 0;
     height: 0;
-  }
+}
   
-  .slider {
+.slider {
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -115,9 +142,9 @@ button:hover {
     -webkit-transition: .4s;
     transition: .4s;
     border-radius: 34px;
-  }
+}
   
-  .slider:before {
+.slider:before {
     position: absolute;
     content: "";
     height: 26px;
@@ -128,31 +155,32 @@ button:hover {
     -webkit-transition: .4s;
     transition: .4s;
     border-radius: 50%;
-  }
-  
-  input:checked + .slider {
-    background-color: #2196f3;
-  }
-  
-  input:focus + .slider {
-    box-shadow: 0 0 1px #2196f3;
-  }
+}
 
+input:checked + .slider {
+    background-color: var(--button-color);
+}
   
-  input:checked + .slider:before {
+input:focus + .slider {
+    box-shadow: 0 0 1px var(--button-color);
+}
+
+
+input:checked + .slider:before {
     -webkit-transform: translateX(26px);
     -ms-transform: translateX(26px);
     transform: translateX(26px);
-  }
+}
 
 .dropdown-button {
-    background-color: rgba(8, 59, 8, 0.5);
     border-radius: 3px;
-    color: black;
     padding: 5px;
     font-size: 20px;
     border: none;
     cursor: pointer;
+    width: 60px;
+    height: 34px;
+    text-align: center;
   }
   
 .dropdown-content {
@@ -169,7 +197,6 @@ button:hover {
   }
 
 .dropdown-content a {
-    color: black;
     padding: 12px 16px;
     text-decoration: none;
     display: block;
@@ -178,7 +205,8 @@ button:hover {
   
 /* Eventually change hover to on click */
 .dropdown-content a:hover {
-    background-color: #f1f1f1
+    background-color: #f1f1f1;
+    color: var(--secondary-color);
 }
   
 .dropdown:hover .dropdown-content {
@@ -186,15 +214,16 @@ display: block;
 }
 
 .dropdown:hover .dropdown-button {
-    background-color: #3e8e41;
+    background-color: var(--button-color);
+    color: var(--secondary-text-dark)
 }
 
 .info-container {
-    background-color: rgb(95, 115, 230);
+    background-color: var(--background-color1);
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    padding: 3vh;
+    padding: 3vh 3vh 7vh 3vh;
     justify-content: space-between;
     align-items: center;
 }
@@ -217,17 +246,24 @@ footer {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    background-color: green;
-    padding: 2vh 3vh;
+    background-color: var(--background-color2);
+    padding: 1vh 2vh;
     gap: 20px;
+    color: var(--secondary-text-light);
 }
 
 .logo {
     height: 30px;
     width: auto;
+    filter: brightness(3);
+}
+
+.logo:hover {
+    filter: brightness(10);
 }
 
 #github, #writeup, #other-projects {
     display: flex;
     align-items: center;
 }
+
