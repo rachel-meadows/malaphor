@@ -1,13 +1,7 @@
 # Imports and initialisations
-import json
-import random
-import nltk
+import json, random, nltk, os, time, sqlite3, urllib.request, urllib.parse, urllib.error, ssl, re, json
 from nltk.probability import FreqDist
 from nltk.tokenize import word_tokenize
-import os
-import time
-import sqlite3
-import urllib.request, urllib.parse, urllib.error, ssl, re, json
 from urllib.request import urlopen
 from profanityfilter import ProfanityFilter
 pf = ProfanityFilter()
@@ -15,7 +9,7 @@ pf = ProfanityFilter()
 # System call so colour works in console
 os.system("")
 
-# Class of different styles
+# Command line colour styling
 class style():
     BLACK = '\033[30m'
     RED = '\033[31m'
@@ -25,22 +19,21 @@ class style():
     MAGENTA = '\033[35m'
     CYAN = '\033[36m'
     WHITE = '\033[37m'
-    UNDERLINE = '\033[4m'
     RESET = '\033[0m'
 
+# Set up SQLite connection
 conn = sqlite3.connect('textCorpus.sqlite')
 cur = conn.cursor()
 result = None
 
-userIdiom = ""
-
+# Find words that are relatively long, but not unique, within the corpus
+# These generally make better 'splitting words' later on
 cur.execute( """
     SELECT idiom FROM Idiom""", )
 try:
     idiomList = cur.fetchall()
 except:
     pass
-
 wordList = []
 for i in idiomList:
     for word in i[0].split():
@@ -48,9 +41,8 @@ for i in idiomList:
 wordFrequency = FreqDist(wordList)
 specialWords = sorted(w for w in set(wordList) if len(w) > 4 and wordFrequency[w] > 2)
 
-# Get a random idiom to compare against
-def randomIdiom(randomIdiom):
-
+# Get a random idiom to merge with the current idiom
+def getRandomIdiom():
     cur.execute( """
     SELECT idiom FROM Idiom ORDER BY RANDOM() LIMIT 1""", )
     try:
@@ -60,37 +52,34 @@ def randomIdiom(randomIdiom):
     except:
         pass
 
-# Search through all idioms and find ones that share a word with the current selection
-def findWord(comparisonIdiom, n):
-    """
-    Looks through n other idioms until it finds a word the same or n is up
-    """
+userIdiom = ""
+# Search through all idioms, and find ones that share a word with the current selection
+# This will continue for n iterations before trying again with a new currentIdiom
+def findSharedWord(comparisonIdiom, n):
     points = 0
     count = 0
     userIdiomCount = 0
     for word in currentIdiom:
         while True:
 
-            # If the user has selected an idiom
+            # If the user has selected their own idiom as the currentIdiom
             if userIdiom != "":
-                comparisonIdiom = str( randomIdiom(randomIdiom) ).split()
+                comparisonIdiom = str( getRandomIdiom() ).split()
                 for comparisonWord in comparisonIdiom:
                     if comparisonWord in currentIdiom:
                         return(comparisonWord, comparisonIdiom)
                     else:
                         continue
                 userIdiomCount += 1
-                if userIdiomCount >= 8000:
+                if userIdiomCount >= 9_200: # Approximate number of unique entries in the database
                     print(style.RED + "\nSorry, a match can't be found for this idiom.\nIt may be too short / use only unique words.\n\n" + style.RESET)
                     userIdiomCount = 0
                     quit()
 
-            # If the computer is selecting a random idiom
+            # If the computer selected a random idiom as currentIdiom
             else:
 
-                # Before selecting a random one, look for semantically related ones
-                # i.e. Retrieve the related terms and their types [either 'synonym', 'related_terms', 'see_also','derived_terms' or 'alternative_terms'] as a list of tuples
-
+                # Before looking through a random idiom for shared words, look through related terms
                 cur.execute( """
                 SELECT Related.related, Related.type
                     FROM Idiom JOIN Related
@@ -98,17 +87,16 @@ def findWord(comparisonIdiom, n):
                     WHERE Idiom.idiom = ?""", ( wholeCurrentIdiom, ) )
                 try:
                     related = cur.fetchall()
-                    # Error checking
-                    # print("Idiom:\n", wholeCurrentIdiom,  "\nRelated:\n", related)
                 except:
                     pass
-
+                
+                # Cut out the optional CONTEXT of the related idiom, which can result in similar outputs - e.g.:
+                # "jump the queue" + "(US) jump the line" --> "(US) jump the queue" (not identified as duplicate)
                 for comparisonIdiom, relatedType in related:
-                    # This regex stops the context of the related idiom being given, which often results in the context being merged with the original idiom to make boring outputs / doubles like:
-                    # "jump the queue" + "(US) jump the line" --> "(US) jump the queue"
                     comparisonIdiom = re.sub(r"\([^()]*\): ", "", comparisonIdiom)
                     comparisonIdiom = re.sub(r"\([^()]*\)", "", comparisonIdiom)
 
+                    # Skip the current idiom if the profanity filter is on and it contains swear words
                     if profanityFilter == True:
                         profanity = pf.is_profane(str(comparisonIdiom))
                         if profanity == True:
@@ -117,17 +105,16 @@ def findWord(comparisonIdiom, n):
                             pass
                     else:
                         pass
-
+                    
+                    # Related items don't have to get a weighted score since they're usually better
                     for comparisonWord in comparisonIdiom.split():      
                         if comparisonWord in currentIdiom:
-                        # Error checking
-                        #print("\n\nOH ME OH MY A TEST CASE\n\nCurrent idiom\n", currentIdiom, "\nComparison word:\n", comparisonWord, "\nComparisonIdiom\n", comparisonIdiom)
                             return(comparisonWord, comparisonIdiom.split())
                         else:
                             continue
 
                 # Points system if no related words that fit
-                comparisonIdiom = str( randomIdiom(randomIdiom) ).split()
+                comparisonIdiom = str( getRandomIdiom() ).split()
                 for comparisonWord in comparisonIdiom:
                     if comparisonWord in currentIdiom:
                         if profanityFilter == True:
@@ -138,43 +125,45 @@ def findWord(comparisonIdiom, n):
                                 pass
                         else:
                             pass
+                        
+                        # Longer idioms are usually more interesting, but they don't both need to be long
+                        points += (len(comparisonIdiom + currentIdiom) * 0.3) 
 
-                        points += (len(comparisonIdiom + currentIdiom) * 0.3) # Longer idioms are usually more interesting, but they don't both need to be long
-                        if comparisonWord in ["ones", "one's"]: # There are a LOT of these, they get boring after a while
+                        # There are a LOT of these; they get boring after a while
+                        if comparisonWord in ["ones", "one's"]: 
                             points -= 3
-                        if comparisonWord not in ["and", "the", "one's", "in", "on", "a", "for", "of", "ones"]: # More generic = less interesting
+                        
+                        # More generic = less interesting
+                        if comparisonWord not in ["and", "the", "one's", "in", "on", "a", "for", "of", "ones"]: # 
                             points += 3
-                        if comparisonWord in specialWords: # These are longer words shared across more idioms
-                            points += 4
-                        if len(comparisonWord) > 3: # More generic = less interesting, and longer words are usually more specialised
-                            points += ( (len(comparisonWord)) * 0.7 )
+
+                        # These are longer words present in at least 2 idioms
+                        if comparisonWord in specialWords: 
+                            points += 3
+                        
+                        # More generic = less interesting, and longer words are usually more specialised
+                        if len(comparisonWord) > 3: 
+                            points += ( (len(comparisonWord)) * 0.6 )
                         try:
                             if comparisonIdiom[comparisonIdiom.index(comparisonWord) + 1] not in ["the", "one", "one's"]:
-                                # The following criteria only makes sense if it's not 'in the' etc.
+                                # The following criteria only makes sense if the phrase isn't 'in the' etc.
                                 try:
-                                    if comparisonIdiom[comparisonIdiom.index(comparisonWord) + 1][0] == currentIdiom[currentIdiom.index(comparisonWord) + 1][0]: # Sounds better if the next word starts with the same letter
-                                        if comparisonIdiom[comparisonIdiom.index(comparisonWord) + 1] == currentIdiom[currentIdiom.index(comparisonWord) + 1]: #i.e. they're the same word
+                                    if comparisonIdiom[comparisonIdiom.index(comparisonWord) + 1][0] == currentIdiom[currentIdiom.index(comparisonWord) + 1][0]:
+                                        # Sounds better if the next word starts with the same letter
+                                        if comparisonIdiom[comparisonIdiom.index(comparisonWord) + 1] == currentIdiom[currentIdiom.index(comparisonWord) + 1]:
+                                            #i.e. they're the same word
                                             points += 4
-                                        else: # If the following word starts with the same letter, but is not that word, it's better
+                                        else:
+                                            # If the following word starts with the same letter, yet is NOT that word, it's even better
                                             points += 5
                                 except: # Some phrases end with the comparisonWord, this avoids out of range error
                                     pass
-                        except: # Some phrases end with the comparisonWord, this avoids out of range error
+                        except:
                             pass
 
-                    if points >= 10: # Edit this for more / less strict filtering
+                    if points >= 9: # Edit this for more / less strict filtering
                         return(comparisonWord, comparisonIdiom)
                     else:
-
-                        # This section can be uncommented to see if the current model looks fair (i.e. "are 'good' idioms being prioritised?")
-                        """
-                        if points > 1: #i.e. at least one word matches
-                            print("\nThe idioms being merged are:\n    " + style.RED + " ".join(currentIdiom) + "\n    " + " ".join(comparisonIdiom) + \
-                            style.RESET + "\n" + "Shared word:\n    " + style.RED + comparisonWord + style.RESET + "\n" + "\nPOINTS:\n    " + \
-                            style.BLUE , round(points,2) , style.RESET + "\n")
-                            time.sleep(2)
-                        """
-
                         points = 0
                         continue
                 count += 1
@@ -246,10 +235,10 @@ while True:
     if userIdiom != "":
         currentIdiom = userIdiom.split()
     else:
-        wholeCurrentIdiom = str( randomIdiom(randomIdiom) )
+        wholeCurrentIdiom = str( getRandomIdiom() )
         currentIdiom = wholeCurrentIdiom.split()
 
-    matchTuple = findWord("", 10)
+    matchTuple = findSharedWord("", 10)
 
     if matchTuple != None:
         wordMatch = matchTuple[0]
