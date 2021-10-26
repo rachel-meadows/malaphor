@@ -177,7 +177,7 @@ while True:
         userChoice = True
         userIdiom = str(input("\nWhat idiom are you looking for?\n").lower())
 
-        # Retrieve the name of the idiom
+        # Retrieve the name of the idiom from the database
         try:
             cur.execute( """
             SELECT Idiom.idiom
@@ -191,7 +191,8 @@ while True:
                 cur.execute("""
                 SELECT Idiom.idiom
                 FROM Idiom
-                WHERE Idiom.idiom LIKE ?""", ( "%" + userIdiom + "%", ) ) # Finds sentence fragment with extra words at start or end
+                WHERE Idiom.idiom LIKE ?""", ( "%" + userIdiom + "%", ) )
+                # ^ Finds any matching sentence fragments with extra words at the beginning or end
 
                 name = (cur.fetchall())[0][0].lower()
                 print("Looks like Wiktionary doesn't have that idiom. However, it does have '" + name + "'.\nIs that what you were looking for? (y/n)")
@@ -238,8 +239,7 @@ while True:
         wholeCurrentIdiom = str( getRandomIdiom() )
         currentIdiom = wholeCurrentIdiom.split()
 
-    matchTuple = findSharedWord("", 10)
-
+    matchTuple = findSharedWord("", 10) # The second argument is how many tries before swapping idioms 
     if matchTuple != None:
         wordMatch = matchTuple[0]
         idiomMatch = matchTuple[1]
@@ -251,7 +251,7 @@ while True:
     newIdiomIndex = idiomMatch.index(wordMatch)
 
     # Usually, swapping a word into the longer sentence makes for a more interesting malaphor.
-    # However, this is dependent on where the matching word is in the sentence. This picks the idiom with the most words before the matching word to start.
+    # However, this depends on where the matching word is in the sentence. This picks the idiom with the most words BEFORE the matching word.
     if currentIdiomIndex > newIdiomIndex:
         startingIdiom = currentIdiom
         endingIdiom = idiomMatch
@@ -261,7 +261,7 @@ while True:
     malaphor = (" ".join(startingIdiom[0:startingIdiom.index(wordMatch)]) + " " + " ".join(endingIdiom[endingIdiom.index(wordMatch):]))
 
     # More of the original context is usually funnier, but only if it's a natural progression point
-    # I'm using length as a rough heuristic for this (e.g. if the malaphor is aready 10+ words, it probably doesn't need the wraparound end)
+    # I'm using length as a rough heuristic for this (e.g. if the malaphor is aready 10+ words, it probably doesn't need a wraparound end)
     if len(malaphor) <= 10:
         if len(malaphor.split()) < len(startingIdiom):
             addition = startingIdiom [ len(malaphor.split()) : ]
@@ -274,10 +274,9 @@ while True:
         pass
 
     # Get rid of duplicates
-    # print("Malaphor:", malaphor, "\nStarting idiom:", str(" ".join(startingIdiom)), "\nEnding idiom:", str(" ".join(endingIdiom)))  # Error checking
     if malaphor.strip() == str(" ".join(startingIdiom)) or malaphor.strip() == str(" ".join(endingIdiom)):
         continue
-    # If the match is the first or last word with a short sentence, it's usually boring
+    # If the match is the first or last word within a short sentence, it's usually boring
     # E.g. "take down a notch" + "come down the pike" --> "come down a notch"
     elif ( (currentIdiom[-1] == wordMatch and currentIdiom[0] == wordMatch) and (len(idiomMatch) <= 4) ):
         continue
