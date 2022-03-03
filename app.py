@@ -17,16 +17,27 @@ from flask import Flask, jsonify, request, render_template
 from flask import render_template
 from flask import Flask
 
-# Creates an instance of the Flask class that will be our WSGI application.
+# Creates an instance of the Flask class that will be the WSGI application.
 app = Flask(__name__)
-
-# The route() decorator tells Flask what URL should trigger our function
 
 
 @app.route("/")
-# The function returns the message to display in the user’s browser. The default content type is HTML.
-def show_malaphor(malaphor=None):
+# Default malaphor on page load
+def show_malaphor(malaphor=None, currentIdiom=None, idiomMatch=None):
+    malaphor, currentIdiom, idiomMatch = generate_malaphor()
+    return render_template('index.html', malaphor=malaphor, currentIdiom=currentIdiom, idiomMatch=idiomMatch)
 
+# Clicking 'New malaphor' button generates a new malaphor
+
+
+@app.route("/")
+def new_malaphor(malaphor=None, currentIdiom=None, idiomMatch=None):
+    if request.method == 'GET':
+        malaphor, currentIdiom, idiomMatch = generate_malaphor()
+        return render_template('index.html', malaphor=malaphor, currentIdiom=currentIdiom, idiomMatch=idiomMatch)
+
+
+def generate_malaphor():
     # System call so colour works in console
     os.system("")
 
@@ -324,11 +335,6 @@ def show_malaphor(malaphor=None):
         else:
             break
 
-    print("\nThe idioms being merged are:\n    " + style.CYAN +
-          " ".join(currentIdiom), "\n   ", " ".join(idiomMatch) + style.RESET)
-
-    print("\nThe malaphor:\n    " + style.GREEN + malaphor + style.RESET)
-
-    return render_template('index.html', malaphor=malaphor)
-
-# The part to replace will be the 'None'
+    currentIdiom = " ".join(currentIdiom)
+    idiomMatch = " ".join(idiomMatch)
+    return malaphor, currentIdiom, idiomMatch
