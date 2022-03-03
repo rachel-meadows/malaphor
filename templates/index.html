@@ -21,14 +21,14 @@
 <div id="generated-malaphors">
   <em><p class="context_text">The idioms being merged are:</p></em>
     {% if currentIdiom %}
-    <p>{{ currentIdiom }}</p>
+    <p class="base-idiom">{{ currentIdiom }}</p>
     {% else %}
     <p>Error: currentIdiom script not connected</p>
     {% endif %}
   <br>
   <em><p class="context_text">and...</p></em>
     {% if idiomMatch %}
-    <p>{{ idiomMatch }}</p>
+    <p class="base-idiom">{{ idiomMatch }}</p>
     {% else %}
     <p>Error: idiomMatch script not connected</p>
     {% endif %}
@@ -36,7 +36,7 @@
   <br>
   <em><p class="context_text">The malaphor:</p></em>
     {% if malaphor %}
-    <b><p>{{ malaphor }}</p></b>
+    <b class="malaphor"><p>{{ malaphor }}</p></b>
     {% else %}
     <p>Error: Malaphor script not connected</p>
     {% endif %}
@@ -47,38 +47,30 @@
     </form>
 
     </div>
-    <div class="options">
-        <h2 id="settings-start">Settings:</h2>
-        <div id="user-input" class="settings-container">
+    <div id="settings-container">
+      <div id="settings-inputs-container">
+        <div id = "align-settings-items">
+          <h2 id="settings-start">Settings:</h2>
+          <div id="user-input" class="settings">
             <div class="settings-text">Choose the starting proverb</div>
             <label class="switch">
-                <input type="checkbox">
-                <span class="slider"></span>
+              <input type="checkbox">
+              <span class="slider"></span>
             </label>
-        </div>
-        <div id="user-input-field">
+          </div>
+          <div id="user-input-field">
             <div>Input here</div>
-        </div>
-        <div id="profanity-filter" class="settings-container">
+          </div>
+          <div id="profanity-filter" class="settings">
             <div class="settings-text">Profanity filter</div>
             <label class="switch">
-                <input type="checkbox" checked>
-                <span class="slider"></span>
+              <input type="checkbox" checked>
+              <span class="slider"></span>
             </label>
-        </div>
-        <div id="algorithm-type" type="checkbox" class="settings-container">
-            <div class="settings-text">Choose algorithm type</div>
-
-            <div id="dropdown-container" class="dropdown">
-                <div class="dropdown-button">▼</div>
-                <div class="dropdown-content">
-                    <a href ="#">Split on nouns only</a>
-                    <a href ="#">Split on verbs only</a>
-                    <a href ="#">Split after propositions only</a>
-                </div>
-            </div>
-
-        </div>
+          </div>
+        </div>  
+      </div>
+    </div>
     </div>
 
     <div class="info-container">

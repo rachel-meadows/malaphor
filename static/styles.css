@@ -57,13 +57,12 @@ footer a:hover,
 }
 
 .navigation {
-  padding: 4vh 3vh 6vh 3vh;
+  padding: 1.5vh 3vw 1.5vh 3vw;
   display: flex;
   justify-content: flex-start;
   align-items: center;
   background-color: var(--background-color2);
-  padding: 1vh 2vh 1vh 10vh;
-  gap: 30px;
+  gap: 2.5vw;
   color: var(--secondary-text-light);
   font-weight: 600;
   position: fixed;
@@ -94,7 +93,7 @@ footer a:hover,
 
 #generated-malaphors {
   padding: 3vh;
-  width: 95vh;
+  width: 85vw;
   font-size: 20px;
   background-color: var(--background-color2);
   text-align: center;
@@ -105,6 +104,15 @@ footer a:hover,
   justify-content: center;
   border-radius: 4px;
   color: var(--secondary-text-light);
+  padding: 5vh 10vw;
+}
+
+.base-idiom {
+  font-size: 1.2em;
+}
+
+.malaphor {
+  font-size: 1.4em;
 }
 
 button {
@@ -124,31 +132,43 @@ button:hover {
   cursor: pointer;
 }
 
-.options {
+#settings-container {
+  background-color: var(--background-color1);
+  color: var(--secondary-text-light);
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  background-color: var(--background-color2);
-  color: var(--secondary-text-light);
-  padding: 6vh 3vh;
-}
-
-.settings-container {
-  display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 10px;
   font-size: 22px;
+  padding: 0 3vh 0 3vh;
+}
+
+#settings-inputs-container {
   background-color: var(--background-color2);
-  padding: 5px 15px;
-  width: 65vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 85vw;
+  border-radius: 4px;
+  padding: 5vh 10vw;
+}
+
+#settings-start {
+  align-self: center;
+}
+
+#align-settings-items {
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
 }
 
 .settings-text {
   display: flex;
   justify-self: flex-end;
+  padding-top: 0.5vh;
 }
 
 .switch {
@@ -204,50 +224,8 @@ input:checked + .slider:before {
   transform: translateX(18px);
 }
 
-.dropdown-button {
-  border-radius: 3px;
-  padding: 5px;
-  font-size: 20px;
-  border: none;
-  cursor: pointer;
-  width: 60px;
-  height: 34px;
-  text-align: center;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f9f9f9;
-  min-width: 160px;
-  box-shadow: 0px 8px 15px 0px rgba(0, 0, 0, 0.4);
-  z-index: 1;
-}
-
 #user-input-field {
   display: none;
-}
-
-.dropdown-content a {
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-  border: 1px grey solid;
-}
-
-/* Eventually change hover to on click */
-.dropdown-content a:hover {
-  background-color: #f1f1f1;
-  color: var(--secondary-color);
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-.dropdown:hover .dropdown-button {
-  background-color: var(--button-color);
-  color: var(--secondary-text-dark);
 }
 
 .info-container {
@@ -270,7 +248,7 @@ button {
 }
 
 .info {
-  width: 90vh;
+  width: 65vw;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -312,4 +290,25 @@ footer {
 
 br {
   margin-top: 15px;
+}
+
+@media (min-width: 850px) {
+  #settings-inputs-container {
+    width: 65vw;
+  }
+  #generated-malaphors {
+    width: 65vw;
+  }
+}
+
+@media (max-width: 500px) {
+  #settings-inputs-container {
+    width: 100%;
+  }
+  #generated-malaphors {
+    width: 100%;
+  }
+  #info {
+    width: 95%;
+  }
 }
