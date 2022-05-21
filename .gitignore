@@ -1,0 +1,13 @@
+# Actual data are too large for GitHub
+textCorpus.sqlite
+
+# Notes
+Case notes for deriving algorithms.md
+Frontend/frontend_mockup.png
+Frontend/Site design.excalidraw
+
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.pyc

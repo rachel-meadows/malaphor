@@ -1,8 +1,5 @@
 """
 
-Malaphor generator based on Wiktionary's list of idioms and proverbs.
-Even though the content contains both idioms and proverbs, they will all be called 'Idioms' in variable names for simplicity's sake.
-
 This file downloads content into a text file, which is then used to build an SQLite database.
 The file 'malaphor.py' is used to work with these data once extracted.
 
@@ -294,4 +291,4 @@ for idiom in idioms:
 print("Done!")
 
 
-# Now see malaphor.py for text processing and working with the data.
+# Now see app.py for text processing and working with the data.

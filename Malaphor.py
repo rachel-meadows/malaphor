@@ -1,63 +1,19 @@
-from nltk.probability import FreqDist
-from nltk.tokenize import word_tokenize
-from urllib.request import urlopen
-import re
-import ssl
-import urllib.error
-import urllib.parse
-import urllib.request
-import sqlite3
-import time
-import os
-import nltk
-import random
-import json
+from helpers import get_splitting_words
+
 from profanityfilter import ProfanityFilter
 pf = ProfanityFilter()
+import re
+import sqlite3
 
-# System call so colour works in console
-os.system("")
+goodSplittingWords = get_splitting_words()
 
-# Command line colour styling
+def generate_malaphor(profanity_filter = True):
 
-
-class style():
-    BLACK = '\033[30m'
-    RED = '\033[31m'
-    GREEN = '\033[32m'
-    YELLOW = '\033[33m'
-    BLUE = '\033[34m'
-    MAGENTA = '\033[35m'
-    CYAN = '\033[36m'
-    WHITE = '\033[37m'
-    RESET = '\033[0m'
-
-
-def generate_malaphor(profanity_filter=True):
-    print('Profanity filter state: ', profanity_filter)
     # Set up SQLite connection
     conn = sqlite3.connect('textCorpus.sqlite')
     cur = conn.cursor()
-    result = None
-
-    # Find words that are relatively long, but not unique, within the corpus
-    # These generally make better 'splitting words' later on
-    cur.execute("""
-    SELECT idiom FROM Idiom""", )
-    try:
-        idiomList = cur.fetchall()
-    except:
-        pass
-    wordList = []
-    for i in idiomList:
-        for word in i[0].split():
-            wordList.append(word)
-    wordFrequency = FreqDist(wordList)
-    specialWords = sorted(w for w in set(wordList) if len(w)
-                          > 4 and wordFrequency[w] > 2)
 
     # Get a random idiom to merge with the current idiom
-
     def getRandomIdiom():
         cur.execute("""
     SELECT idiom FROM Idiom ORDER BY RANDOM() LIMIT 1""", )
@@ -160,7 +116,7 @@ def generate_malaphor(profanity_filter=True):
                                 points += 3
 
                             # These are longer words present in at least 2 idioms
-                            if comparisonWord in specialWords:
+                            if comparisonWord in goodSplittingWords:
                                 points += 3
 
                             # More generic = less interesting, and longer words are usually more specialised
