@@ -22,11 +22,9 @@ At the time of writing this, there is no generator that generates malaphors from
 
 This generator scrapes Wiktionary's corpus of [8000+ idioms](https://en.wiktionary.org/wiki/Category:English_idioms) and [1,000+ proverbs](https://en.wiktionary.org/wiki/Category:English_proverbs), which are constantly being updated.
 
-The scope of this allows for more possible malaphors to be evaluated, and for criteria to 'grade' the outputs before showing the best ones to the user.
+The scope of this allows for more possible malaphors to be evaluated, and for criteria to 'grade' options before showing the best ones to the user.
 
-These malaphors are entirely novel, which makes them fun - every new generation is a roll of the dice!*
-
-<sub>_*And on that note - please be aware some idioms in Wiktionary's corpus contain profanity, which can be passed on to the malaphors. At some point [I'll make an optional toggle](https://github.com/rachel-meadows/malaphor/issues/8#issue-1028591792) to filter these out._</sub>
+These malaphors are entirely novel, which makes them fun - every new generation is a roll of the dice!
 
 
 ## What's the status of this project?
