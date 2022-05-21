@@ -33,7 +33,8 @@ class style():
     RESET = '\033[0m'
 
 
-def generate_malaphor():
+def generate_malaphor(profanity_filter=True):
+    print('Profanity filter state: ', profanity_filter)
     # Set up SQLite connection
     conn = sqlite3.connect('textCorpus.sqlite')
     cur = conn.cursor()
@@ -117,7 +118,7 @@ def generate_malaphor():
                             r"\([^()]*\)", "", comparisonIdiom)
 
                         # Skip the current idiom if the profanity filter is on and it contains swear words
-                        if profanityFilter == True:
+                        if profanity_filter == True:
                             profanity = pf.is_profane(str(comparisonIdiom))
                             if profanity == False:
                                 continue
@@ -137,7 +138,7 @@ def generate_malaphor():
                     comparisonIdiom = str(getRandomIdiom()).split()
                     for comparisonWord in comparisonIdiom:
                         if comparisonWord in currentIdiom:
-                            if profanityFilter == True:
+                            if profanity_filter == True:
                                 profanity = pf.is_profane(str(comparisonIdiom))
                                 if profanity == True:
                                     continue
@@ -236,21 +237,6 @@ def generate_malaphor():
                     continue
         elif userChoice.lower() == "n":
             userChoice = False
-            break
-        else:
-            print("Please type 'y' or 'n'.")
-            continue
-
-    # Check if the user wants a profanity filter on
-    while True:
-        # profanity = input("Do you want a profanity filter applied? (y/n)\n")
-        profanity = "y"
-        if profanity.lower() == "y":
-            profanityFilter = True
-            # print("\nYou got it! Some things may slip by the filter, but idioms containing common swear words have been removed.\n")
-            break
-        elif profanity.lower() == "n":
-            profanityFilter = False
             break
         else:
             print("Please type 'y' or 'n'.")

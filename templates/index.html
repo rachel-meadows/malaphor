@@ -42,7 +42,7 @@
     {% endif %}
 </div>
 
-    <form method="get">
+    <form name="new_malaphor" method="GET">
       <button type="submit">New malaphor</button>
     </form>
 
@@ -51,22 +51,23 @@
       <div id="settings-inputs-container">
         <div id = "align-settings-items">
           <h2 id="settings-start">Settings:</h2>
-          <div id="user-input" class="settings">
-            <div class="settings-text">Choose the starting proverb</div>
-            <label class="switch">
-              <input type="checkbox">
-              <span class="slider"></span>
-            </label>
-          </div>
-          <div id="user-input-field">
-            <div>Input here</div>
-          </div>
+
           <div id="profanity-filter" class="settings">
-            <div class="settings-text">Profanity filter</div>
-            <label class="switch">
-              <input type="checkbox" checked>
-              <span class="slider"></span>
-            </label>
+            <form method="POST" action="/q?profanityFilter">
+              <input type="checkbox" name="profanityFilter" id="profanityFilter" onChange="this.form.submit()" checked>
+              <label for="profanityFilter">Profanity filter</label>
+            </form>
+          </div>
+
+          <div id="user-input" class="settings">
+            <form method="POST" action="/userInput">
+              <input type="checkbox" name="userInput" id="userInput" onChange="showInputField()">
+              <label for="userInput">Choose the starting proverb</label>
+              <div id="user-input-field">
+                <input type="text" name="userMalaphor" placeholder="Your starting metaphor here">
+                <button>Submit</button>
+              </div>
+            </form>
           </div>
         </div>  
       </div>
