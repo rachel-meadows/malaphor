@@ -1,26 +1,23 @@
-from operator import index
-from flask import Flask, request, render_template, url_for, redirect
 from malaphor import generate_malaphor
-from markupsafe import escape
-import sys
+
+from operator import index
+from flask import Flask, request, render_template
 
 # Creates an instance of the Flask class that will be the WSGI application.
 app = Flask(__name__)
 
 # Default malaphor on page load
-
-
 @app.route("/", methods=['GET', 'POST'])
-def home(malaphor=None, currentIdiom=None, idiomMatch=None):
+def home(currentIdiom = None, idiomMatch = None, malaphor = None):
     currentIdiom, idiomMatch, malaphor = generate_malaphor()
-    return render_template('index.html', malaphor=malaphor, currentIdiom=currentIdiom, idiomMatch=idiomMatch)
+    return render_template('index.html', currentIdiom = currentIdiom, idiomMatch = idiomMatch,  malaphor = malaphor)
 
 
 # Clicking 'New malaphor' button generates a new malaphor
-def new_malaphor(malaphor=None, currentIdiom=None, idiomMatch=None):
+def new_malaphor(currentIdiom = None, idiomMatch = None, malaphor = None):
     if request.method == 'GET':
         currentIdiom, idiomMatch, malaphor = generate_malaphor()
-        return render_template('index.html', malaphor=malaphor, currentIdiom=currentIdiom, idiomMatch=idiomMatch)
+        return render_template('index.html', currentIdiom = currentIdiom, idiomMatch = idiomMatch,  malaphor = malaphor)
 
 
 # I want:

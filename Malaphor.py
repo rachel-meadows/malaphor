@@ -58,10 +58,8 @@ def generate_malaphor(profanity_filter = True, user_idiom = ""):
                             continue
                     userIdiomCount += 1
                     if userIdiomCount >= 9_200:  # Approximate number of unique entries in the database
-                        print(
-                            style.RED + "\nSorry, a match can't be found for this idiom.\nIt may be too short / use only unique words.\n\n" + style.RESET)
                         userIdiomCount = 0
-                        quit()
+                        raise Exception("Sorry, a match can't be found for this idiom.\nIt may be too short / use only unique words.")
 
                 # If the computer selected a random idiom as currentIdiom
                 else:
@@ -161,55 +159,6 @@ def generate_malaphor(profanity_filter = True, user_idiom = ""):
                         points = 0
                         break
 
-    while True:
-        # userChoice = input("Do you want to submit your own idiom? (y/n)\n")
-        userChoice = "n"
-        if userChoice.lower() == "y":
-            userChoice = True
-            userIdiom = str(
-                input("\nWhat idiom are you looking for?\n").lower())
-
-            # Retrieve the name of the idiom from the database
-            try:
-                cur.execute("""
-            SELECT Idiom.idiom
-            FROM Idiom
-            WHERE Idiom.idiom = ?""", (userIdiom, ))
-                name = cur.fetchall()[0][0].lower()
-                break
-
-            except:
-                try:
-                    cur.execute("""
-                SELECT Idiom.idiom
-                FROM Idiom
-                WHERE Idiom.idiom LIKE ?""", ("%" + userIdiom + "%", ))
-                    # ^ Finds any matching sentence fragments with extra words at the beginning or end
-
-                    name = (cur.fetchall())[0][0].lower()
-                    print("Looks like Wiktionary doesn't have that idiom. However, it does have '" +
-                          name + "'.\nIs that what you were looking for? (y/n)")
-                    matchCorrect = input()
-                    if matchCorrect.lower() == "y":
-                        userIdiom = name
-                        break
-                    elif matchCorrect.lower() == "n":
-                        userIdiom = ""
-                        continue
-                    else:
-                        print("Please type 'y' or 'n'.")
-                        continue
-                except:
-                    print("\nLooks like Wiktionary doesn't have that idiom - you might want to:\n- Check your spelling\n- Try another idiom\n- Let the program choose an idiom\n")
-                    userIdiom = ""
-                    continue
-        elif userChoice.lower() == "n":
-            userChoice = False
-            break
-        else:
-            print("Please type 'y' or 'n'.")
-            continue
-
     # If no match found after 10 (n) iterations, the current idiom is swapped (as it may consist of unusual / unique words not present in other idioms)
     while True:
         if userIdiom != "":
@@ -219,7 +168,10 @@ def generate_malaphor(profanity_filter = True, user_idiom = ""):
             currentIdiom = wholeCurrentIdiom.split()
 
         # The second argument is how many tries before swapping idioms
-        matchTuple = findSharedWord("", 10)
+        try:
+            matchTuple = findSharedWord("", 7)
+        except Exception as inst:
+            return inst.args
         if matchTuple != None:
             wordMatch = matchTuple[0]
             idiomMatch = matchTuple[1]
@@ -273,5 +225,7 @@ def generate_malaphor(profanity_filter = True, user_idiom = ""):
     idiomMatch = " ".join(idiomMatch)
     return currentIdiom, idiomMatch, malaphor
 
+
+# For testing without frontend
 malaphor = generate_malaphor(True, "")
 print(malaphor)
