@@ -1,4 +1,4 @@
-from helpers import get_splitting_words
+from helpers import get_splitting_words, check_for_user_idiom
 
 from profanityfilter import ProfanityFilter
 pf = ProfanityFilter()
@@ -7,11 +7,23 @@ import sqlite3
 
 goodSplittingWords = get_splitting_words()
 
-def generate_malaphor(profanity_filter = True):
+def generate_malaphor(profanity_filter = True, user_idiom = ""):
 
     # Set up SQLite connection
     conn = sqlite3.connect('textCorpus.sqlite')
     cur = conn.cursor()
+
+    # If the user has chosen their own starting idiom, check if it is in the database
+    if user_idiom:
+        # Returns ['present' | 'partial' , 'idiom' ] | [False]
+        isPresent = check_for_user_idiom(user_idiom)
+        if isPresent[0] == False:
+            return('Sorry, that idiom isn\'t in the database.')
+        elif isPresent[0] == 'partial':
+            return('Sorry, that idiom isn\'t in the database. Did you mean "' + isPresent[1] + '"?')
+        else:
+            # All references to user_idiom from here on are to an actual record.
+            pass
 
     # Get a random idiom to merge with the current idiom
     def getRandomIdiom():
@@ -260,3 +272,6 @@ def generate_malaphor(profanity_filter = True):
     currentIdiom = " ".join(currentIdiom)
     idiomMatch = " ".join(idiomMatch)
     return currentIdiom, idiomMatch, malaphor
+
+malaphor = generate_malaphor(True, "")
+print(malaphor)

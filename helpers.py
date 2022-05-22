@@ -24,3 +24,33 @@ def get_splitting_words():
     goodSplittingWords = sorted(w for w in set(wordList) if len(w)
                           > 4 and wordFrequency[w] > 2)
     return goodSplittingWords
+
+
+
+def check_for_user_idiom(user_idiom):
+    # Set up SQLite connection
+    conn = sqlite3.connect('textCorpus.sqlite')
+    cur = conn.cursor()
+
+    try:
+        cur.execute("""
+    SELECT Idiom.idiom
+    FROM Idiom
+    WHERE Idiom.idiom = ?""", (user_idiom, ))
+        idiom = cur.fetchall()[0][0].lower()
+        return ['present', idiom]
+
+    except:
+        try:
+            cur.execute("""
+        SELECT Idiom.idiom
+        FROM Idiom
+        WHERE Idiom.idiom LIKE ?""", ("%" + user_idiom + "%", ))
+            # ^ Finds any matching sentence fragments with extra words at the beginning or end
+
+            idiom = (cur.fetchall())[0][0].lower()
+            return ['partial', idiom]
+
+        except:
+            return [False]
+    return
