@@ -75,9 +75,9 @@ def generate_malaphor(profanity_filter = True, user_idiom = ""):
                     except:
                         pass
 
-                    # Cut out the optional CONTEXT of the related idiom, which can result in similar outputs - e.g.:
-                    # "jump the queue" + "(US) jump the line" --> "(US) jump the queue" (not identified as duplicate)
                     for comparisonIdiom, relatedType in related:
+                        # Cut out the optional CONTEXT of the related idiom, which can result in similar outputs - e.g.:
+                        # "jump the queue" + "(US) jump the line" --> "(US) jump the queue" (not identified as duplicate)
                         comparisonIdiom = re.sub(
                             r"\([^()]*\): ", "", comparisonIdiom)
                         comparisonIdiom = re.sub(
@@ -86,8 +86,8 @@ def generate_malaphor(profanity_filter = True, user_idiom = ""):
                         # Skip the current idiom if the profanity filter is on and it contains swear words
                         if profanity_filter == True:
                             profanity = pf.is_profane(str(comparisonIdiom))
-                            if profanity == False:
-                                continue
+                            if profanity == True:
+                                continue # Keep looking
                             else:
                                 pass
                         else:
@@ -108,7 +108,7 @@ def generate_malaphor(profanity_filter = True, user_idiom = ""):
                             if profanity_filter == True:
                                 profanity = pf.is_profane(str(comparisonIdiom))
                                 if profanity == True:
-                                    continue
+                                    continue # Keep looking
                                 else:
                                     pass
                             else:
