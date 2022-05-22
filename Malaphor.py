@@ -102,6 +102,7 @@ def generate_malaphor(profanity_filter = True, user_idiom = ""):
 
                     # Points system if no related words that fit
                     comparisonIdiom = str(getRandomIdiom()).split()
+
                     for comparisonWord in comparisonIdiom:
                         if comparisonWord in currentIdiom:
                             if profanity_filter == True:
@@ -169,7 +170,7 @@ def generate_malaphor(profanity_filter = True, user_idiom = ""):
 
         # The second argument is how many tries before swapping idioms
         try:
-            matchTuple = findSharedWord("", 7)
+            matchTuple = findSharedWord("", 10)
         except Exception as inst:
             return inst.args
         if matchTuple != None:
@@ -207,10 +208,6 @@ def generate_malaphor(profanity_filter = True, user_idiom = ""):
         else:
             pass
 
-        if "one's" in malaphor:
-            # More personal = more entertaining
-            malaphor = malaphor.replace(" one's ", " your ")
-
         # Get rid of duplicates
         if malaphor.strip() == str(" ".join(startingIdiom)) or malaphor.strip() == str(" ".join(endingIdiom)):
             continue
@@ -223,6 +220,12 @@ def generate_malaphor(profanity_filter = True, user_idiom = ""):
 
     currentIdiom = " ".join(currentIdiom)
     idiomMatch = " ".join(idiomMatch)
+
+    # More personal = more entertaining
+    currentIdiom = currentIdiom.replace(" one's ", " your ")
+    idiomMatch = idiomMatch.replace(" one's ", " your ")
+    malaphor = malaphor.replace(" one's ", " your ")
+
     return currentIdiom, idiomMatch, malaphor
 
 
