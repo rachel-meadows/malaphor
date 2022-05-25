@@ -9,49 +9,15 @@ app = Flask(__name__)
 # Default malaphor on page load
 @app.route("/", methods=['GET', 'POST'])
 def home(currentIdiom = None, idiomMatch = None, malaphor = None):
-    currentIdiom, idiomMatch, malaphor = generate_malaphor()
+    currentIdiom, idiomMatch, malaphor = generate_malaphor(True, "")
     return render_template('index.html', currentIdiom = currentIdiom, idiomMatch = idiomMatch,  malaphor = malaphor)
 
 
 # Clicking 'New malaphor' button generates a new malaphor
 def new_malaphor(currentIdiom = None, idiomMatch = None, malaphor = None):
     if request.method == 'GET':
-        currentIdiom, idiomMatch, malaphor = generate_malaphor()
+        currentIdiom, idiomMatch, malaphor = generate_malaphor(True, "")
         return render_template('index.html', currentIdiom = currentIdiom, idiomMatch = idiomMatch,  malaphor = malaphor)
 
-
-# I want:
-# http:domain-path/query?profanityFilter=True&startingIdiom=None
-# http:domain-path/query?profanityFilter=False&startingIdiom=None
-# http:domain-path/query?profanityFilter=True&startingIdiom=half+a+loaf+is+better+than+none
-# http:domain-path/query?profanityFilter=False&startingIdiom=half+a+loaf+is+better+than+none
-
-@app.route("/:profanityFilter", methods=['GET', 'POST'])
-def profanityFilter():
-    return ("hi ", profanityFilter)
-
-# Queries
-# @app.route("/q", methods=['POST'])
-# def query():
-
-#     args = request.args
-#     print(args, file=sys.stderr)
-
-#     if "profanityFilter" in args:
-#         profanityFilter = escape(args.get("profanityFilter"))
-#     if "startingIdiom" in args:
-#         startingIdiom = escape(args["startingIdiom"])
-
-#     return "No query string received", 200
-
-
-# @app.route("/profanityFilter", methods=['POST'])
-# def profanityFilter(malaphor=None, currentIdiom=None, idiomMatch=None):
-#     profanityFilter = request.args.get('profanityFilter')
-#     startingIdiom = request.args.get('startingIdiom')
-#     if request.method == 'POST':
-#         currentIdiom, idiomMatch, malaphor = generate_malaphor(True)
-#         return render_template('index.html', malaphor=malaphor, currentIdiom=currentIdiom, idiomMatch=idiomMatch)
-
-if __name__ == '__main__':
-    app.run(debug=True)
+# if __name__ == '__main__':
+#     app.run(debug=False)

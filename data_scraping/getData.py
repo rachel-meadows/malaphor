@@ -289,6 +289,3 @@ for idiom in idioms:
         time.sleep(5)
 
 print("Done!")
-
-
-# Now see app.py for text processing and working with the data.

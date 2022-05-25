@@ -1,11 +1,15 @@
-# Actual data are too large for GitHub
-textCorpus.sqlite
+# Removing data with obvious profanities to be on the safe side for job-hunting
+# At least until profanity filter works CONSITENTLY
+originalTextCorpus.sqlite
 
-# Notes
+# Notes and plans
 Case notes for deriving algorithms.md
 Frontend/frontend_mockup.png
 Frontend/Site design.excalidraw
 
+# venv
+/venv
+/env
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

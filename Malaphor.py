@@ -230,5 +230,6 @@ def generate_malaphor(profanity_filter = True, user_idiom = ""):
 
 
 # For testing without frontend
-malaphor = generate_malaphor(True, "")
-print(malaphor)
+# The starting idiom choice and profanity filter work here - just need frontend integration
+# malaphor = generate_malaphor(True, "")
+# print(malaphor)
