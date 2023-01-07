@@ -26,34 +26,34 @@ def generate_malaphor(profanity_filter = True, user_idiom = ""):
             pass
 
     # Get a random idiom to merge with the current idiom
-    def getRandomIdiom():
+    def get_random_idiom():
         cur.execute("""
     SELECT idiom FROM Idiom ORDER BY RANDOM() LIMIT 1""", )
         try:
-            randomIdiom = cur.fetchall()
-            randomIdiom = randomIdiom[0][0]
-            return randomIdiom
+            random_idiom = cur.fetchall()
+            random_idiom = random_idiom[0][0]
+            return random_idiom
         except:
             pass
 
     userIdiom = ""
 
     # Search through all idioms, and find ones that share a word with the current selection
-    # This will continue for n iterations before trying again with a new currentIdiom
+    # This will continue for n iterations before trying again with a new selected_idiom
 
-    def findSharedWord(comparisonIdiom, n):
+    def findSharedWord(comparison_idiom, n):
         points = 0
         count = 0
         userIdiomCount = 0
-        for word in currentIdiom:
+        for word in selected_idiom:
             while True:
 
-                # If the user has selected their own idiom as the currentIdiom
+                # If the user has selected their own idiom as the selected_idiom
                 if userIdiom != "":
-                    comparisonIdiom = str(getRandomIdiom()).split()
-                    for comparisonWord in comparisonIdiom:
-                        if comparisonWord in currentIdiom:
-                            return(comparisonWord, comparisonIdiom)
+                    comparison_idiom = str(get_random_idiom()).split()
+                    for comparison_word in comparison_idiom:
+                        if comparison_word in selected_idiom:
+                            return(comparison_word, comparison_idiom)
                         else:
                             continue
                     userIdiomCount += 1
@@ -61,7 +61,7 @@ def generate_malaphor(profanity_filter = True, user_idiom = ""):
                         userIdiomCount = 0
                         raise Exception("Sorry, a match can't be found for this idiom.\nIt may be too short / use only unique words.")
 
-                # If the computer selected a random idiom as currentIdiom
+                # If the computer selected a random idiom as selected_idiom
                 else:
 
                     # Before looking through a random idiom for shared words, look through related terms
@@ -69,23 +69,23 @@ def generate_malaphor(profanity_filter = True, user_idiom = ""):
                 SELECT Related.related, Related.type
                     FROM Idiom JOIN Related
                     ON Idiom.id = Related.idiom_id
-                    WHERE Idiom.idiom = ?""", (wholeCurrentIdiom, ))
+                    WHERE Idiom.idiom = ?""", (whole_selected_idiom, ))
                     try:
                         related = cur.fetchall()
                     except:
                         pass
 
-                    for comparisonIdiom, relatedType in related:
+                    for comparison_idiom, relatedType in related:
                         # Cut out the optional CONTEXT of the related idiom, which can result in similar outputs - e.g.:
                         # "jump the queue" + "(US) jump the line" --> "(US) jump the queue" (not identified as duplicate)
-                        comparisonIdiom = re.sub(
-                            r"\([^()]*\): ", "", comparisonIdiom)
-                        comparisonIdiom = re.sub(
-                            r"\([^()]*\)", "", comparisonIdiom)
+                        comparison_idiom = re.sub(
+                            r"\([^()]*\): ", "", comparison_idiom)
+                        comparison_idiom = re.sub(
+                            r"\([^()]*\)", "", comparison_idiom)
 
                         # Skip the current idiom if the profanity filter is on and it contains swear words
                         if profanity_filter == True:
-                            profanity = pf.is_profane(str(comparisonIdiom))
+                            profanity = pf.is_profane(str(comparison_idiom))
                             if profanity == True:
                                 continue # Keep looking
                             else:
@@ -94,19 +94,19 @@ def generate_malaphor(profanity_filter = True, user_idiom = ""):
                             pass
 
                         # Related items don't have to get a weighted score since they're usually better
-                        for comparisonWord in comparisonIdiom.split():
-                            if comparisonWord in currentIdiom:
-                                return(comparisonWord, comparisonIdiom.split())
+                        for comparison_word in comparison_idiom.split():
+                            if comparison_word in selected_idiom:
+                                return(comparison_word, comparison_idiom.split())
                             else:
                                 continue
 
                     # Points system if no related words that fit
-                    comparisonIdiom = str(getRandomIdiom()).split()
+                    comparison_idiom = str(get_random_idiom()).split()
 
-                    for comparisonWord in comparisonIdiom:
-                        if comparisonWord in currentIdiom:
+                    for comparison_word in comparison_idiom:
+                        if comparison_word in selected_idiom:
                             if profanity_filter == True:
-                                profanity = pf.is_profane(str(comparisonIdiom))
+                                profanity = pf.is_profane(str(comparison_idiom))
                                 if profanity == True:
                                     continue # Keep looking
                                 else:
@@ -115,43 +115,43 @@ def generate_malaphor(profanity_filter = True, user_idiom = ""):
                                 pass
 
                             # Longer idioms are usually more interesting, but they don't both need to be long
-                            points += (len(comparisonIdiom +
-                                           currentIdiom) * 0.3)
+                            points += (len(comparison_idiom +
+                                           selected_idiom) * 0.3)
 
                             # There are a LOT of these; they get boring after a while
-                            if comparisonWord in ["ones", "one's"]:
+                            if comparison_word in ["ones", "one's"]:
                                 points -= 3
 
                             # More generic = less interesting
-                            if comparisonWord not in ["and", "the", "one's", "in", "on", "a", "for", "of", "ones"]:
+                            if comparison_word not in ["and", "the", "one's", "in", "on", "a", "for", "of", "ones"]:
                                 points += 3
 
                             # These are longer words present in at least 2 idioms
-                            if comparisonWord in goodSplittingWords:
+                            if comparison_word in goodSplittingWords:
                                 points += 3
 
                             # More generic = less interesting, and longer words are usually more specialised
-                            if len(comparisonWord) > 3:
-                                points += ((len(comparisonWord)) * 0.6)
+                            if len(comparison_word) > 3:
+                                points += ((len(comparison_word)) * 0.6)
                             try:
-                                if comparisonIdiom[comparisonIdiom.index(comparisonWord) + 1] not in ["the", "one", "one's"]:
+                                if comparison_idiom[comparison_idiom.index(comparison_word) + 1] not in ["the", "one", "one's"]:
                                     # The following criteria only makes sense if the phrase isn't 'in the' etc.
                                     try:
-                                        if comparisonIdiom[comparisonIdiom.index(comparisonWord) + 1][0] == currentIdiom[currentIdiom.index(comparisonWord) + 1][0]:
+                                        if comparison_idiom[comparison_idiom.index(comparison_word) + 1][0] == selected_idiom[selected_idiom.index(comparison_word) + 1][0]:
                                             # Sounds better if the next word starts with the same letter
-                                            if comparisonIdiom[comparisonIdiom.index(comparisonWord) + 1] == currentIdiom[currentIdiom.index(comparisonWord) + 1]:
+                                            if comparison_idiom[comparison_idiom.index(comparison_word) + 1] == selected_idiom[selected_idiom.index(comparison_word) + 1]:
                                                 # i.e. they're the same word
                                                 points += 4
                                             else:
                                                 # If the following word starts with the same letter, yet is NOT that word, it's even better
                                                 points += 5
-                                    except:  # Some phrases end with the comparisonWord, this avoids out of range error
+                                    except:  # Some phrases end with the comparison_word, this avoids out of range error
                                         pass
                             except:
                                 pass
 
                         if points >= 9:  # Edit this for more / less strict filtering
-                            return(comparisonWord, comparisonIdiom)
+                            return(comparison_word, comparison_idiom)
                         else:
                             points = 0
                             continue
@@ -163,10 +163,10 @@ def generate_malaphor(profanity_filter = True, user_idiom = ""):
     # If no match found after 10 (n) iterations, the current idiom is swapped (as it may consist of unusual / unique words not present in other idioms)
     while True:
         if userIdiom != "":
-            currentIdiom = userIdiom.split()
+            selected_idiom = userIdiom.split()
         else:
-            wholeCurrentIdiom = str(getRandomIdiom())
-            currentIdiom = wholeCurrentIdiom.split()
+            whole_selected_idiom = str(get_random_idiom())
+            selected_idiom = whole_selected_idiom.split()
 
         # The second argument is how many tries before swapping idioms
         try:
@@ -175,61 +175,61 @@ def generate_malaphor(profanity_filter = True, user_idiom = ""):
             return inst.args
         if matchTuple != None:
             wordMatch = matchTuple[0]
-            idiomMatch = matchTuple[1]
+            matching_idiom = matchTuple[1]
         else:
             continue
 
         # Locate shared word in each idiom
-        currentIdiomIndex = currentIdiom.index(wordMatch)
-        newIdiomIndex = idiomMatch.index(wordMatch)
+        selected_idiomIndex = selected_idiom.index(wordMatch)
+        new_idiom_index = matching_idiom.index(wordMatch)
 
         # Usually, swapping a word into the longer sentence makes for a more interesting malaphor.
         # However, this depends on where the matching word is in the sentence. This picks the idiom with the most words BEFORE the matching word.
-        if currentIdiomIndex > newIdiomIndex:
-            startingIdiom = currentIdiom
-            endingIdiom = idiomMatch
+        if selected_idiomIndex > new_idiom_index:
+            starting_idiom = selected_idiom
+            ending_idiom = matching_idiom
         # Not doing a random choice if they're equal length since the original idiom was random anyway.
-        elif currentIdiomIndex <= newIdiomIndex:
-            startingIdiom = idiomMatch
-            endingIdiom = currentIdiom
-        malaphor = (" ".join(startingIdiom[0:startingIdiom.index(
-            wordMatch)]) + " " + " ".join(endingIdiom[endingIdiom.index(wordMatch):]))
+        elif selected_idiomIndex <= new_idiom_index:
+            starting_idiom = matching_idiom
+            ending_idiom = selected_idiom
+        generated_malaphor = (" ".join(starting_idiom[0:starting_idiom.index(
+            wordMatch)]) + " " + " ".join(ending_idiom[ending_idiom.index(wordMatch):]))
 
         # More of the original context is usually funnier, but only if it's a natural progression point
         # I'm using length as a rough heuristic for this (e.g. if the malaphor is already 10+ words, it probably doesn't need a wraparound end)
-        if len(malaphor) <= 10:
-            if len(malaphor.split()) < len(startingIdiom):
-                addition = startingIdiom[len(malaphor.split()):]
-                malaphor = malaphor + " " + " ".join(addition)
+        if len(generated_malaphor) <= 10:
+            if len(generated_malaphor.split()) < len(starting_idiom):
+                addition = starting_idiom[len(generated_malaphor.split()):]
+                generated_malaphor = generated_malaphor + " " + " ".join(addition)
 
-            elif len(malaphor.split()) < len(endingIdiom):
-                addition = endingIdiom[len(malaphor.split()):]
-                malaphor = malaphor + " ".join(addition)
+            elif len(generated_malaphor.split()) < len(ending_idiom):
+                addition = ending_idiom[len(generated_malaphor.split()):]
+                generated_malaphor = generated_malaphor + " ".join(addition)
         else:
             pass
 
         # Get rid of duplicates
-        if malaphor.strip() == str(" ".join(startingIdiom)) or malaphor.strip() == str(" ".join(endingIdiom)):
+        if generated_malaphor.strip() == str(" ".join(starting_idiom)) or generated_malaphor.strip() == str(" ".join(ending_idiom)):
             continue
         # If the match is the first or last word within a short sentence, it's usually boring
         # E.g. "take down a notch" + "come down the pike" --> "come down a notch"
-        elif ((currentIdiom[-1] == wordMatch and currentIdiom[0] == wordMatch) and (len(idiomMatch) <= 4)):
+        elif ((selected_idiom[-1] == wordMatch and selected_idiom[0] == wordMatch) and (len(matching_idiom) <= 4)):
             continue
         else:
             break
 
-    currentIdiom = " ".join(currentIdiom)
-    idiomMatch = " ".join(idiomMatch)
+    selected_idiom = " ".join(selected_idiom)
+    matching_idiom = " ".join(matching_idiom)
 
     # More personal = more entertaining
-    currentIdiom = currentIdiom.replace(" one's ", " your ")
-    idiomMatch = idiomMatch.replace(" one's ", " your ")
-    malaphor = malaphor.replace(" one's ", " your ")
+    selected_idiom = selected_idiom.replace(" one's ", " your ")
+    matching_idiom = matching_idiom.replace(" one's ", " your ")
+    generated_malaphor = generated_malaphor.replace(" one's ", " your ")
 
-    return currentIdiom, idiomMatch, malaphor
+    return selected_idiom, matching_idiom, generated_malaphor
 
 
 # For testing without frontend
 # The starting idiom choice and profanity filter work here - just need frontend integration
-# malaphor = generate_malaphor(True, "")
-# print(malaphor)
+# generated_malaphor = generated_malaphor(True, "")
+# print(generated_malaphor)

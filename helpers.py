@@ -41,7 +41,6 @@ def check_for_user_idiom(user_idiom):
         return ['present', idiom]
 
     except:
-        try:
             cur.execute("""
         SELECT Idiom.idiom
         FROM Idiom
@@ -50,7 +49,4 @@ def check_for_user_idiom(user_idiom):
 
             idiom = (cur.fetchall())[0][0].lower()
             return ['partial', idiom]
-
-        except:
-            return [False]
     return
